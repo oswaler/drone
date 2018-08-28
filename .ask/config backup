@@ -8,7 +8,7 @@
           "apis": {
             "custom": {
               "endpoint": {
-                "uri": "ask-drone"
+                "uri": "ask-custom-audio-stream-starter-default"
               }
             }
           }
@@ -16,7 +16,7 @@
       },
       "resources": {
         "manifest": {
-          "eTag": "460767afd5b20330e5e3babba957dab6"
+          "eTag": "8ab000e040da131e201cc7eb4e825998"
         },
         "interactionModel": {
           "en-US": {
@@ -25,13 +25,13 @@
         },
         "lambda": [
           {
-            "arn": "arn:aws:lambda:us-east-1:127860566682:function:ask-drone",
-            "functionName": "ask-drone",
+            "arn": "arn:aws:lambda:us-east-1:127860566682:function:ask-custom-audio-stream-starter-default",
+            "functionName": "arn:aws:lambda:us-east-1:127860566682:function:ask-custom-audio-stream-starter-default",
             "awsRegion": "us-east-1",
             "alexaUsage": [
               "custom/default"
             ],
-            "revisionId": "feed6320-fc4e-4f95-918a-2e4d9c084150"
+            "revisionId": "ac405a0a-47ec-4d04-8cd5-9b9f136500c4"
           }
         ]
       }

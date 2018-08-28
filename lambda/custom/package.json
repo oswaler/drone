@@ -1,5 +1,5 @@
 {
-  "name": "Audio Stream Starter Skill Template",
+  "name": "Music Drone",
   "version": "1.0.0",
   "description": "A starter template for an Alexa audio streaming skill.",
   "main": "index.js",

@@ -1,39 +1,83 @@
 {
-  "interactionModel": {
-    "languageModel": {
-      "invocationName": "audio stream starter",
-      "intents": [{
-          "name": "PlayStream",
-          "samples": [
-            "play",
-            "start",
-            "play stream"
-          ]
-        },
-        {
-          "name": "AMAZON.PauseIntent"
-        },
-        {
-          "name": "AMAZON.ResumeIntent"
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": [
-            "help me",
-            "how does this work",
-            "what should i do"
-          ]
-        },
-        {
-          "name": "AMAZON.StopIntent"
-        },
-        {
-          "name": "AMAZON.CancelIntent"
-        },
-        {
-          "name": "AMAZON.StartOverIntent"
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "music drone",
+            "intents": [
+                {
+                    "name": "PlayStream",
+                    "slots": [],
+                    "samples": [
+                        "play",
+                        "start",
+                        "play stream"
+                    ]
+                },
+                {
+                    "name": "AMAZON.PauseIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.ResumeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "help me",
+                        "how does this work",
+                        "what should i do"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StartOverIntent",
+                    "samples": []
+                },
+                {
+                    "name": "noteIntent",
+                    "slots": [
+                        {
+                            "name": "note",
+                            "type": "note"
+                        }
+                    ],
+                    "samples": [
+                        "Give me an {note}",
+                        "Play me an {note}",
+                        "Play me a {note}",
+                        "Give me a {note}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "note",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "c."
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "d."
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "a."
+                            }
+                        }
+                    ]
+                }
+            ]
         }
-      ]
     }
-  }
 }

@@ -30,39 +30,10 @@ var handlers = {
   },
   'noteIntent': function() {
     //this.emit('PlayStream');
-   
-    //Create objects to hold possible interpretations of each note
-
-  var arrC = ['c.', 'C natural', 'See natural'];
-  var arrD = ['d.', 'die', 'teenager','diner','diner natural','the natural',
-                'at the natural','D natural','t natural',
-                't. natural','denaturalize', 'denatural' ];
-  
-  // Get note read from user 
-  let slotValue = this.event.request.intent.slots.note.value; 
-  let txtResult="";
-   
-  //Find out what note was chosen and assign proper statement
-  if (slotValue in arrC){
-    txtResult = "It was the C natural.";
-  }
-  else if(slotValue in arrD{
-    txtResult = "It was the D.";
-  }
-   
-  /* else if(slotValue == "a." || slotValue == "teenager" || slotValue == "Diner Natural" ||
-   slotValue == "the Natural" || slotValue == " at the Natural" ||slotValue == "D natural" ||
-   slotValue == "Dee Natural" ||slotValue == "t natural"  || slotValue == "t. natural" || slotValue == "denaturalize" || slotValue == "denatural") {
-    txtResult = "It was the A Natural.";
-   }
-   else {
-    txtResult = "I didn't get those.";
-   }
-   */
-  
-   // play result back
-  this.response.speak(txtResult + " Original was " + slotValue);
-  this.emit(':responseReady');
+   //var slotValue;
+   let slotValue = this.event.request.intent.slots.note.value;
+    this.response.speak(slotValue);
+    this.emit(':responseReady');
   },
 
 
