@@ -57,7 +57,8 @@
                         }
                     ],
                     "samples": [
-                        "Give me a {pitch} {FirstModifier} {SecondModifier}"
+                        "Give me a {pitch} {FirstModifier} {SecondModifier}",
+                        "Give me an {pitch} {FirstModifier} {SecondModifier}"
                     ]
                 }
             ],
