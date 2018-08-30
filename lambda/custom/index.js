@@ -4,6 +4,9 @@ var Alexa = require('alexa-sdk');
 
 Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
+//Base url to build URLs from
+const BASE_URL = 'https://ericoswald.com';
+
 var streamInfo = {
   title: 'Audio Stream Starter',
   subtitle: 'A starter template for an Alexa audio streaming skill.',
@@ -13,6 +16,70 @@ var streamInfo = {
     largeImageUrl: 'https://s3.amazonaws.com/cdn.dabblelab.com/img/alexa-card-lg.png',
     smallImageUrl: 'https://s3.amazonaws.com/cdn.dabblelab.com/img/alexa-card-sm.png'
   }
+};
+
+ //Patterns to construct sound file URL
+ //Use enharmonics to reduce number of files needed
+const pitchEndUrl = {
+  C: {
+      doubleflat: '/Bflat.mp3',
+      flat: '/B.mp3',
+      natural: '/C.mp3',
+      sharp: '/Csharp.mp3',
+      doublesharp: '/D.mp3'
+  },
+    
+  D: {
+      doubleflat: '/C.mp3',
+      flat: '/Csharp.mp3',
+      natural: '/D.mp3',
+      sharp: '/Eflat.mp3',
+      doublesharp: '/E.mp3'
+  },
+  E: {
+      doubleflat: '/D.mp3',
+      flat: '/Eflat.mp3',
+      natural: '/E.mp3',
+      sharp: '/F.mp3',
+      doublesharp: '/Fsharp.mp3'
+  },
+  F: {
+      doubleflat: '/Eflat.mp3',
+      flat: '/E.mp3',
+      natural: '/F.mp3',
+      sharp: '/Fsharp.mp3',
+      doublesharp: '/G.mp3'
+  },
+  G: {
+      doubleflat: '/F.mp3',
+      flat: '/Fsharp.mp3',
+      natural: '/G.mp3',
+      sharp: '/Aflat.mp3',
+      doublesharp: '/A.mp3'
+  },
+  A: {
+      doubleflat: '/G.mp3',
+      flat: '/Aflat.mp3',
+      natural: '/A.mp3',
+      sharp: '/Bflat.mp3',
+      doublesharp: '/B.mp3'
+  },
+  B: {
+      doubleflat: '/A.mp3',
+      flat: '/Bflat.mp3',
+      natural: '/B.mp3',
+      sharp: '/C.mp3',
+      doublesharp: '/Csharp.mp3'
+  }
+};
+
+//Used for translating accidental text to appropriate character
+const accidentalToChar = {
+  doubleflat: '♭♭',
+  flat: '♭',
+  natural: '', //'♮'
+  sharp: '♯',
+  doublesharp: 'x'
 };
 
 exports.handler = (event, context, callback) => {
@@ -66,14 +133,25 @@ var handlers = {
           multiplier = 'double';
       }
 
-      const speechOutput = 
+      
+    //Construct spoken output
+     const speechOutput = 
      // message 
       pitch 
       + (multiplier ? ' ' + multiplier : '')
-      + (accidental === 'natural' ? '' : ' ' + accidental)
+      + (accidental === 'natural' ? '' : ' ' + accidental);
 
+     //Construct sound file URL
+     const fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
+
+     //Construct printed output
+     const pitchChar = pitch + accidentalToChar[multiplier + accidental];
+     const txtOutput = pitchChar + ' ' + fileURL;
+      
+    //Output to card and voice
+    this.response.cardRenderer('OK', txtOutput);
     this.response.speak(speechOutput);
-  this.emit(':responseReady');
+    this.emit(':responseReady');
   },
 
   'noteIntent': function() {
