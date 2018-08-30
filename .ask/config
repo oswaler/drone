@@ -20,18 +20,18 @@
         },
         "interactionModel": {
           "en-US": {
-            "eTag": "4762305fa78681465f6ae18e6f30ef77"
+            "eTag": "e7a6c052820ea2572bbb73771265158b"
           }
         },
         "lambda": [
           {
             "arn": "arn:aws:lambda:us-east-1:127860566682:function:ask-drone",
-            "functionName": "ask-drone",
+            "functionName": "arn:aws:lambda:us-east-1:127860566682:function:ask-drone",
             "awsRegion": "us-east-1",
             "alexaUsage": [
               "custom/default"
             ],
-            "revisionId": "feed6320-fc4e-4f95-918a-2e4d9c084150"
+            "revisionId": "061d52e2-1d6a-407b-9952-6f38027e0a15"
           }
         ]
       }

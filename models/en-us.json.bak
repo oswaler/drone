@@ -41,89 +41,67 @@
                     "samples": []
                 },
                 {
-                    "name": "GetPitchIntent",
+                    "name": "noteIntent",
                     "slots": [
                         {
-                            "name": "pitch",
-                            "type": "List_of_Pitches"
-                        },
-                        {
-                            "name": "FirstModifier",
-                            "type": "List_Of_Modifiers"
-                        },
-                        {
-                            "name": "SecondModifier",
-                            "type": "List_Of_Modifiers"
+                            "name": "note",
+                            "type": "note"
                         }
                     ],
                     "samples": [
-                        "Give me a {pitch} {FirstModifier} {SecondModifier}"
+                        "Give me a {note}"
                     ]
                 }
             ],
             "types": [
                 {
-                    "name": "List_of_Pitches",
+                    "name": "note",
                     "values": [
                         {
                             "name": {
-                                "value": "G."
+                                "value": "c."
+                            }
+                        }, 
+                        {
+                            "name": {
+                                "value": "D"
                             }
                         },
                         {
                             "name": {
-                                "value": "F."
+                                "value": "d. natural"
                             }
                         },
                         {
                             "name": {
-                                "value": "E."
+                                "value": "D natural"
                             }
                         },
                         {
                             "name": {
-                                "value": "D."
+                                "value": "d."
                             }
                         },
                         {
                             "name": {
-                                "value": "C."
+                                "value": "C"
                             }
                         },
                         {
                             "name": {
-                                "value": "B."
+                                "value": "c. natural"
                             }
                         },
                         {
                             "name": {
-                                "value": "A."
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "List_Of_Modifiers",
-                    "values": [
-                        {
-                            "name": {
-                                "value": "double"
+                                "value": "C natural"
                             }
                         },
                         {
                             "name": {
-                                "value": "natural"
+                                "value": "a."
                             }
-                        },
-                        {
-                            "name": {
-                                "value": "flat"
-                            }
-                        },
-                        {
-                            "name": {
-                                "value": "sharp"
-                            }
+                        
                         }
                     ]
                 }

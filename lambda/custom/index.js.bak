@@ -2,8 +2,6 @@
 
 var Alexa = require('alexa-sdk');
 
-Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
-
 var streamInfo = {
   title: 'Audio Stream Starter',
   subtitle: 'A starter template for an Alexa audio streaming skill.',
@@ -30,52 +28,6 @@ var handlers = {
   'LaunchRequest': function() {
     this.emit('PlayStream');
   },
-  'GetPitchIntent': function() {
-
-       
-    const pitchValue = this.event.request.intent.slots.pitch.value;
-    const pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-G]/g, '').charAt(0);
-    const firstModValue = this.event.request.intent.slots.FirstModifier.value;
-    const firstMod = (firstModValue || '').trim().toLowerCase();
-    const secondModValue = this.event.request.intent.slots.SecondModifier.value;
-    const secondMod = (secondModValue || '').trim().toLowerCase();
-    
-    // if there's a second modifier, the second modifier is the accidental.
-    // otherwise, it's the first modifier.
-    let accidental = secondMod ?  secondMod : firstMod;
-    if (!accidental) {
-            accidental = 'natural';
-    }
-    
-    // if there's a second modifier, the first modifier is the multiplier.
-    // otherwise, the multiplier doesn't exist
-    let multiplier = secondMod ? firstMod : '';
-    
- // this translates things like "shark" to "sharp"
-        // or "flight" to "flat"
-        if (/^sh/i.test(accidental)) {
-          accidental = 'sharp';
-      } else if (/^f/i.test(accidental)) {
-          accidental = 'flat';
-      } else if (/^n/i.test(accidental)) {
-          accidental = 'natural';
-      }
-      
-      // this translates "double" soundalikes
-      if (/^d/i.test(multiplier)) {
-          multiplier = 'double';
-      }
-
-      const speechOutput = 
-     // message 
-      pitch 
-      + (multiplier ? ' ' + multiplier : '')
-      + (accidental === 'natural' ? '' : ' ' + accidental)
-
-    this.response.speak(speechOutput);
-  this.emit(':responseReady');
-  },
-
   'noteIntent': function() {
     //this.emit('PlayStream');
    
