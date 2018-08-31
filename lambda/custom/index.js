@@ -95,7 +95,12 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-    this.emit('PlayStream');
+   const startSpeech = "Welcome to Music Drone. What note would you like? You can say things like G natural, or F sharp.";
+   const startReprompt = "What note would you like?";
+   this.emit(':ask', startSpeech, startReprompt);
+    
+    //this.emit(':responseReady');
+    //this.emit('PlayStream');
   },
   'GetPitchIntent': function() {
 
@@ -194,8 +199,19 @@ var handlers = {
     this.emit(':responseReady');
   },
   'AMAZON.HelpIntent': function() {
-    // skill help logic goes here
-    this.emit(':responseReady');
+   // On help request explain what user can do and wait for a response.
+   
+   const helpSpeech = "I will play a sustained tone for you on the viola. \
+   You can ask for any scale tone. You can ask for tones by saying things \
+   like G natural, F sharp, B flat, or C double sharp. \
+   You can also ask for an AY Four Forty. If your device has a screen I \
+   will show you the note I\'m playing. When you are finished you can say Stop. \
+   What note would you like?";
+   
+   const helpReprompt = "What note would you like?";
+   this.emit(':ask', helpSpeech, helpReprompt);
+    
+    //this.emit(':responseReady');
   },
   'SessionEndedRequest': function() {
     // no session ended logic needed
@@ -224,7 +240,7 @@ var handlers = {
     this.emit('AMAZON.StopIntent');
   },
   'AMAZON.StopIntent': function() {
-    this.response.speak('Okay. I\'ve stopped the stream.').audioPlayerStop();
+    this.response.speak('Ok').audioPlayerStop();
     this.emit(':responseReady');
   },
   'AMAZON.ResumeIntent': function() {

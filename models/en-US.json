@@ -58,7 +58,14 @@
                     ],
                     "samples": [
                         "Give me a {pitch} {FirstModifier} {SecondModifier}",
-                        "Give me an {pitch} {FirstModifier} {SecondModifier}"
+                        "Give me an {pitch} {FirstModifier} {SecondModifier}",
+                        "Play me a {pitch} {FirstModifier} {SecondModifier}",
+                        "Play me an {pitch} {FirstModifier} {SecondModifier}",
+                        "Sing me a {pitch} {FirstModifier} {SecondModifier}",
+                        "Sing me an {pitch} {FirstModifier} {SecondModifier}",
+                        "{pitch} {FirstModifier} {SecondModifier}",
+                        "a {pitch} {FirstModifier} {SecondModifier}",
+                        "an {pitch} {FirstModifier} {SecondModifier}"
                     ]
                 }
             ],
