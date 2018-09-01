@@ -104,7 +104,9 @@ var handlers = {
   },
   'GetPitchIntent': function() {
 
-       
+       //might need to change pitch filter to allow any letter
+       //so wrong values can be handled gracefully
+       //probably need to add all letters to intent too.
     const pitchValue = this.event.request.intent.slots.pitch.value;
     const pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-G]/g, '').charAt(0);
     const firstModValue = this.event.request.intent.slots.FirstModifier.value;
@@ -138,7 +140,8 @@ var handlers = {
           multiplier = 'double';
       }
 
-      
+    
+
     //Construct spoken output
      const speechOutput = 
      // message 

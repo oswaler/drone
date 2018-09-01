@@ -65,7 +65,23 @@
                         "Sing me an {pitch} {FirstModifier} {SecondModifier}",
                         "{pitch} {FirstModifier} {SecondModifier}",
                         "a {pitch} {FirstModifier} {SecondModifier}",
-                        "an {pitch} {FirstModifier} {SecondModifier}"
+                        "an {pitch} {FirstModifier} {SecondModifier}",
+                        "a {pitch}",
+                        "an {pitch}",
+                        "Give me a {pitch}",
+                        "Give me an {pitch}",
+                        "Play me a {pitch}",
+                        "Play me an {pitch}",
+                        "Sing me a {pitch}",
+                        "Sing me an {pitch}",
+                        "Give me a {pitch} {FirstModifier}",
+                        "Give me an {pitch} {FirstModifier}",
+                        "Play me a {pitch} {FirstModifier}",
+                        "Play me an {pitch} {FirstModifier}",
+                        "Sing me a {pitch} {FirstModifier}",
+                        "Sing me an {pitch} {FirstModifier}",
+                        "a {pitch} {FirstModifier}",
+                        "an {pitch} {FirstModifier}"
                     ]
                 }
             ],
