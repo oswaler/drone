@@ -95,7 +95,9 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-   const startSpeech = "Welcome to Music Drone. What note would you like? You can say things like G natural, or F sharp.";
+   const startSpeech = "Welcome to Music Drone. What note would you like? \
+   You can say things like G natural, or F sharp.";
+   
    const startReprompt = "What note would you like?";
    this.emit(':ask', startSpeech, startReprompt);
     
@@ -108,7 +110,7 @@ var handlers = {
        //so wrong values can be handled gracefully
        //probably need to add all letters to intent too.
     const pitchValue = this.event.request.intent.slots.pitch.value;
-    const pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-G]/g, '').charAt(0);
+    const pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
     const firstModValue = this.event.request.intent.slots.FirstModifier.value;
     const firstMod = (firstModValue || '').trim().toLowerCase();
     const secondModValue = this.event.request.intent.slots.SecondModifier.value;
@@ -141,25 +143,70 @@ var handlers = {
       }
 
     
-
-    //Construct spoken output
-     const speechOutput = 
-     // message 
-      pitch 
-      + (multiplier ? ' ' + multiplier : '')
-      + (accidental === 'natural' ? '' : ' ' + accidental);
-
-     //Construct sound file URL
-     const fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
-
-     //Construct printed output
-     const pitchChar = pitch + accidentalToChar[multiplier + accidental];
-     const txtOutput = pitchChar + ' ' + fileURL;
+    //Check for any invalid input and ask for note again, otherwise construct and send output.
+    const noteRequested = 'You requested ' + pitch + ' ' + multiplier + ' ' + accidental; 
+    
+    //Validate pitch given was A-G
+    const validPitch = ["A", "B", "C", "D", "E", "F", "G"];
+    
+    if (validPitch.indexOf(pitch) === -1) {
+    
+    var badPitch = noteRequested + '. The note must be AY, B, C, D, E, F, or G. \
+    . You can also say something like Ay flat or C double sharp. What note would you like?';
+  
+    this.emit(':ask', badPitch, badPitch);
+    }
+    
+    // validate that the user gave a valid accidental
+    else if (['flat', 'natural', 'sharp'].indexOf(accidental) === -1) {
       
-    //Output to card and voice
-    this.response.cardRenderer('OK', txtOutput);
-    this.response.speak(speechOutput);
-    this.emit(':responseReady');
+      var badAccidental = noteRequested + '. The accidental must be flat, \
+      sharp or natural. What note would you like?.';
+      
+      this.emit(':ask', badAccidental, badAccidental);
+    }
+    
+    // validate that the user gave a valid multiplier
+    else if (multiplier !== '' && multiplier !== 'double') {
+      
+      var badMultiplierText = noteRequested + '. If you use three words to describe your note, \
+      the second word must be double. So you can say something like C double \
+      flat, or F double sharp. What note would you like?';
+
+      this.emit(':ask', badMultiplierText,badMultiplierText);
+    }
+
+     // validate that the user didn't say "double natural"
+    else if (multiplier === 'double' && accidental === 'natural') {
+     
+      var badCombinationText = noteRequested + '. There is no such thing \
+      as a note that is double natural. ' + 'What note would you like?';
+      
+      this.emit(':ask', badCombinationText, badCombinationText);
+    }
+
+    //If all checks are passed then play the note
+    else {
+
+        //Construct spoken output
+        const speechOutput = 
+        // message 
+          pitch 
+          + (multiplier ? ' ' + multiplier : '')
+          + (accidental === 'natural' ? '' : ' ' + accidental);
+
+        //Construct sound file URL
+        const fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
+
+        //Construct printed output
+        const pitchChar = pitch + accidentalToChar[multiplier + accidental];
+        const txtOutput = pitchChar + ' ' + fileURL;
+          
+        //Output to card and voice
+        this.response.cardRenderer('OK', txtOutput);
+        this.response.speak(speechOutput);
+        this.emit(':responseReady');
+    }
   },
 
   'noteIntent': function() {
