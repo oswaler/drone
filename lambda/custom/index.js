@@ -6,6 +6,13 @@ Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
 //Base url to build URLs from
 const BASE_URL = 'https://ericoswald.com';
+var fileURL = '';
+
+//Commonly used message text
+const startSpeech = "Welcome to Music Drone. What note would you like? \
+   You can say things like G natural, or F sharp.";
+   
+const startReprompt = "What note would you like?";
 
 var streamInfo = {
   title: 'Audio Stream Starter',
@@ -95,10 +102,10 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-   const startSpeech = "Welcome to Music Drone. What note would you like? \
-   You can say things like G natural, or F sharp.";
+   //const startSpeech = "Welcome to Music Drone. What note would you like? \
+   //You can say things like G natural, or F sharp.";
    
-   const startReprompt = "What note would you like?";
+   //const startReprompt = "What note would you like?";
    this.emit(':ask', startSpeech, startReprompt);
     
     //this.emit(':responseReady');
@@ -110,7 +117,7 @@ var handlers = {
        //so wrong values can be handled gracefully
        //probably need to add all letters to intent too.
     const pitchValue = this.event.request.intent.slots.pitch.value;
-    const pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
+    var pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
     const firstModValue = this.event.request.intent.slots.FirstModifier.value;
     const firstMod = (firstModValue || '').trim().toLowerCase();
     const secondModValue = this.event.request.intent.slots.SecondModifier.value;
@@ -128,7 +135,7 @@ var handlers = {
     let multiplier = secondMod ? firstMod : '';
     
  // this translates things like "shark" to "sharp"
-        // or "flight" to "flat"
+ // or "flight" to "flat"
         if (/^sh/i.test(accidental)) {
           accidental = 'sharp';
       } else if (/^f/i.test(accidental)) {
@@ -142,13 +149,19 @@ var handlers = {
           multiplier = 'double';
       }
 
-    
+      //This translates common pitch soundalikes
+      if (pitch == 'S') {
+        pitch = 'C';
+      }
+      if (pitch == 'T') {
+        pitch = 'D';
+      }
+
     //Check for any invalid input and ask for note again, otherwise construct and send output.
     const noteRequested = 'You requested ' + pitch + ' ' + multiplier + ' ' + accidental; 
     
     //Validate pitch given was A-G
     const validPitch = ["A", "B", "C", "D", "E", "F", "G"];
-    
     if (validPitch.indexOf(pitch) === -1) {
     
     var badPitch = noteRequested + '. The note must be AY, B, C, D, E, F, or G. \
@@ -196,12 +209,13 @@ var handlers = {
           + (accidental === 'natural' ? '' : ' ' + accidental);
 
         //Construct sound file URL
-        const fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
+        fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
 
         //Construct printed output
         const pitchChar = pitch + accidentalToChar[multiplier + accidental];
         const txtOutput = pitchChar + ' ' + fileURL;
-          
+        fileURL = ''; //clear this so it doesn't remain in next pass
+
         //Output to card and voice
         this.response.cardRenderer('OK', txtOutput);
         this.response.speak(speechOutput);
@@ -244,9 +258,18 @@ var handlers = {
 
   'PlayStream': function() {
     
-    
-    this.response.speak('Enjoy.').audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
-    this.emit(':responseReady');
+    if (!fileURL) {
+      const againText = 'Sorry, I didn\'t understand your request.' + startSpeech;  
+      this.emit(':ask', againText, startReprompt);
+    }
+
+    else {
+      this.response.cardRenderer('OK', fileURL);
+      this.response.speak('URL is:' + fileURL);
+      //fileURL = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
+      //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', fileURL, fileURL, null, 0);
+      this.emit(':responseReady');
+    }
   },
   'AMAZON.HelpIntent': function() {
    // On help request explain what user can do and wait for a response.

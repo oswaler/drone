@@ -41,67 +41,113 @@
                     "samples": []
                 },
                 {
-                    "name": "noteIntent",
+                    "name": "GetPitchIntent",
                     "slots": [
                         {
-                            "name": "note",
-                            "type": "note"
+                            "name": "pitch",
+                            "type": "List_of_Pitches"
+                        },
+                        {
+                            "name": "FirstModifier",
+                            "type": "List_Of_Modifiers"
+                        },
+                        {
+                            "name": "SecondModifier",
+                            "type": "List_Of_Modifiers"
                         }
                     ],
                     "samples": [
-                        "Give me a {note}"
+                        "Give me a {pitch} {FirstModifier} {SecondModifier}",
+                        "Give me an {pitch} {FirstModifier} {SecondModifier}",
+                        "Play me a {pitch} {FirstModifier} {SecondModifier}",
+                        "Play me an {pitch} {FirstModifier} {SecondModifier}",
+                        "Sing me a {pitch} {FirstModifier} {SecondModifier}",
+                        "Sing me an {pitch} {FirstModifier} {SecondModifier}",
+                        "{pitch} {FirstModifier} {SecondModifier}",
+                        "a {pitch} {FirstModifier} {SecondModifier}",
+                        "an {pitch} {FirstModifier} {SecondModifier}",
+                        "a {pitch}",
+                        "an {pitch}",
+                        "Give me a {pitch}",
+                        "Give me an {pitch}",
+                        "Play me a {pitch}",
+                        "Play me an {pitch}",
+                        "Sing me a {pitch}",
+                        "Sing me an {pitch}",
+                        "Give me a {pitch} {FirstModifier}",
+                        "Give me an {pitch} {FirstModifier}",
+                        "Play me a {pitch} {FirstModifier}",
+                        "Play me an {pitch} {FirstModifier}",
+                        "Sing me a {pitch} {FirstModifier}",
+                        "Sing me an {pitch} {FirstModifier}",
+                        "a {pitch} {FirstModifier}",
+                        "an {pitch} {FirstModifier}"
                     ]
                 }
             ],
             "types": [
                 {
-                    "name": "note",
+                    "name": "List_of_Pitches",
                     "values": [
                         {
                             "name": {
-                                "value": "c."
-                            }
-                        }, 
-                        {
-                            "name": {
-                                "value": "D"
+                                "value": "G."
                             }
                         },
                         {
                             "name": {
-                                "value": "d. natural"
+                                "value": "F."
                             }
                         },
                         {
                             "name": {
-                                "value": "D natural"
+                                "value": "E."
                             }
                         },
                         {
                             "name": {
-                                "value": "d."
+                                "value": "D."
                             }
                         },
                         {
                             "name": {
-                                "value": "C"
+                                "value": "C."
                             }
                         },
                         {
                             "name": {
-                                "value": "c. natural"
+                                "value": "B."
                             }
                         },
                         {
                             "name": {
-                                "value": "C natural"
+                                "value": "A."
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "List_Of_Modifiers",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "double"
                             }
                         },
                         {
                             "name": {
-                                "value": "a."
+                                "value": "natural"
                             }
-                        
+                        },
+                        {
+                            "name": {
+                                "value": "flat"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "sharp"
+                            }
                         }
                     ]
                 }

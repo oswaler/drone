@@ -7,6 +7,7 @@ Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 //Base url to build URLs from
 const BASE_URL = 'https://ericoswald.com';
 
+
 var streamInfo = {
   title: 'Audio Stream Starter',
   subtitle: 'A starter template for an Alexa audio streaming skill.',
@@ -95,13 +96,22 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-    this.emit('PlayStream');
+   const startSpeech = "Welcome to Music Drone. What note would you like? \
+   You can say things like G natural, or F sharp.";
+   
+   const startReprompt = "What note would you like?";
+   this.emit(':ask', startSpeech, startReprompt);
+    
+    //this.emit(':responseReady');
+    //this.emit('PlayStream');
   },
   'GetPitchIntent': function() {
 
-       
+       //might need to change pitch filter to allow any letter
+       //so wrong values can be handled gracefully
+       //probably need to add all letters to intent too.
     const pitchValue = this.event.request.intent.slots.pitch.value;
-    const pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-G]/g, '').charAt(0);
+    const pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
     const firstModValue = this.event.request.intent.slots.FirstModifier.value;
     const firstMod = (firstModValue || '').trim().toLowerCase();
     const secondModValue = this.event.request.intent.slots.SecondModifier.value;
@@ -133,25 +143,70 @@ var handlers = {
           multiplier = 'double';
       }
 
+    
+    //Check for any invalid input and ask for note again, otherwise construct and send output.
+    const noteRequested = 'You requested ' + pitch + ' ' + multiplier + ' ' + accidental; 
+    
+    //Validate pitch given was A-G
+    const validPitch = ["A", "B", "C", "D", "E", "F", "G"];
+    if (validPitch.indexOf(pitch) === -1) {
+    
+    var badPitch = noteRequested + '. The note must be AY, B, C, D, E, F, or G. \
+    . You can also say something like Ay flat or C double sharp. What note would you like?';
+  
+    this.emit(':ask', badPitch, badPitch);
+    }
+    
+    // validate that the user gave a valid accidental
+    else if (['flat', 'natural', 'sharp'].indexOf(accidental) === -1) {
       
-    //Construct spoken output
-     const speechOutput = 
-     // message 
-      pitch 
-      + (multiplier ? ' ' + multiplier : '')
-      + (accidental === 'natural' ? '' : ' ' + accidental);
-
-     //Construct sound file URL
-     const fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
-
-     //Construct printed output
-     const pitchChar = pitch + accidentalToChar[multiplier + accidental];
-     const txtOutput = pitchChar + ' ' + fileURL;
+      var badAccidental = noteRequested + '. The accidental must be flat, \
+      sharp or natural. What note would you like?.';
       
-    //Output to card and voice
-    this.response.cardRenderer('OK', txtOutput);
-    this.response.speak(speechOutput);
-    this.emit(':responseReady');
+      this.emit(':ask', badAccidental, badAccidental);
+    }
+    
+    // validate that the user gave a valid multiplier
+    else if (multiplier !== '' && multiplier !== 'double') {
+      
+      var badMultiplierText = noteRequested + '. If you use three words to describe your note, \
+      the second word must be double. So you can say something like C double \
+      flat, or F double sharp. What note would you like?';
+
+      this.emit(':ask', badMultiplierText,badMultiplierText);
+    }
+
+     // validate that the user didn't say "double natural"
+    else if (multiplier === 'double' && accidental === 'natural') {
+     
+      var badCombinationText = noteRequested + '. There is no such thing \
+      as a note that is double natural. ' + 'What note would you like?';
+      
+      this.emit(':ask', badCombinationText, badCombinationText);
+    }
+
+    //If all checks are passed then play the note
+    else {
+
+        //Construct spoken output
+        const speechOutput = 
+        // message 
+          pitch 
+          + (multiplier ? ' ' + multiplier : '')
+          + (accidental === 'natural' ? '' : ' ' + accidental);
+
+        //Construct sound file URL
+        const fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
+
+        //Construct printed output
+        const pitchChar = pitch + accidentalToChar[multiplier + accidental];
+        const txtOutput = pitchChar + ' ' + fileURL;
+          
+        //Output to card and voice
+        this.response.cardRenderer('OK', txtOutput);
+        this.response.speak(speechOutput);
+        this.emit(':responseReady');
+    }
   },
 
   'noteIntent': function() {
@@ -194,8 +249,19 @@ var handlers = {
     this.emit(':responseReady');
   },
   'AMAZON.HelpIntent': function() {
-    // skill help logic goes here
-    this.emit(':responseReady');
+   // On help request explain what user can do and wait for a response.
+   
+   const helpSpeech = "I will play a sustained tone for you on the viola. \
+   You can ask for any scale tone. You can ask for tones by saying things \
+   like G natural, F sharp, B flat, or C double sharp. \
+   You can also ask for an AY Four Forty. If your device has a screen I \
+   will show you the note I\'m playing. When you are finished you can say Stop. \
+   What note would you like?";
+   
+   const helpReprompt = "What note would you like?";
+   this.emit(':ask', helpSpeech, helpReprompt);
+    
+    //this.emit(':responseReady');
   },
   'SessionEndedRequest': function() {
     // no session ended logic needed
@@ -224,7 +290,7 @@ var handlers = {
     this.emit('AMAZON.StopIntent');
   },
   'AMAZON.StopIntent': function() {
-    this.response.speak('Okay. I\'ve stopped the stream.').audioPlayerStop();
+    this.response.speak('Ok').audioPlayerStop();
     this.emit(':responseReady');
   },
   'AMAZON.ResumeIntent': function() {
