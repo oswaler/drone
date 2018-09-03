@@ -33,6 +33,10 @@
         "interfaces": [
           {
             "type": "AUDIO_PLAYER"
+          },
+          {
+           "type": "RENDER_TEMPLATE",
+           "minimumTemplateVersion": "1.0"
           }
         ]
       }

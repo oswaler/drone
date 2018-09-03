@@ -25,6 +25,7 @@ var streamInfo = {
   }
 };
 
+
  //Patterns to construct sound file URL
  //Use enharmonics to reduce number of files needed
 const pitchEndUrl = {
@@ -113,9 +114,9 @@ var handlers = {
   },
   'GetPitchIntent': function() {
 
-       //might need to change pitch filter to allow any letter
-       //so wrong values can be handled gracefully
-       //probably need to add all letters to intent too.
+    //Get pitch, multiplier and accidental and translate them to a standard format.
+    // pitch is var rather than const because some cleanup code later translates
+    // common Alexa misunderstandings in pitch letters
     const pitchValue = this.event.request.intent.slots.pitch.value;
     var pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
     const firstModValue = this.event.request.intent.slots.FirstModifier.value;
@@ -201,10 +202,17 @@ var handlers = {
     //If all checks are passed then play the note
     else {
 
-        //Construct spoken output
+        //Construct spoken output. If pitch is A have Alexa pronounce it as AY
+        var pitchSpeech
+        if (pitch == 'A'){
+          pitchSpeech = 'AY';
+        }
+        else {
+          pitchSpeech = pitch;
+        }
         const speechOutput = 
         // message 
-          pitch 
+          pitchSpeech 
           + (multiplier ? ' ' + multiplier : '')
           + (accidental === 'natural' ? '' : ' ' + accidental);
 
@@ -223,43 +231,11 @@ var handlers = {
     }
   },
 
-  'noteIntent': function() {
-    //this.emit('PlayStream');
-   
-    //Create objects to hold possible interpretations of each note
-
-  var arrC = ['c.', 'C', 'c', 'C natural', 'attrill', 'trill', 'See natural', 'seat', 'seat natural'];
-  var arrD = ['d.', 'd', 'D', 'die', 'dye', 'TV', 'TV natural', 'Dean Hatcher', 'teenager','diner','diner natural','the natural',
-                'at the natural','D natural','t natural',
-                't. natural','denaturalize', 'denatural', 't.','T', 'd flat', 'die flat'];
-  
-  // Get note read from user 
-  let slotValue = this.event.request.intent.slots.note.value; 
-  var txtResult;
-   
-  //Find out what note was chosen and assign proper statement
-  if (arrC.indexOf(slotValue) != -1){
-    txtResult = "It was the C natural.";
-  }
-  else if(arrD.indexOf(slotValue) != -1){
-    txtResult = "It was the D.";
-  }
-   else {
-     txtResult= "I didn't get it.";
-   }
-  
-   let outSpeech = txtResult + " Original was " + slotValue;
-  
-   // play result back
-   this.response.cardRenderer(slotValue, txtResult);
-  this.response.speak(outSpeech);
-  this.emit(':responseReady');
-  },
-
+ 
   'PlayStream': function() {
     
     if (!fileURL) {
-      const againText = 'Sorry, I didn\'t understand your request.' + startSpeech;  
+      const againText = 'Sorry, I didn\'t understand your request. ' + startSpeech;  
       this.emit(':ask', againText, startReprompt);
     }
 
@@ -332,7 +308,7 @@ var handlers = {
     this.emit('AMAZON.StartOverIntent');
   },
   'AMAZON.StartOverIntent': function() {
-    this.response.speak('Sorry. I can\'t do that yet.');
+    this.response.speak('Sorry. I can\'t do that.');
     this.emit(':responseReady');
   },
   'PlayCommandIssued': function() {
@@ -370,4 +346,34 @@ var audioEventHandlers = {
     this.response.audioPlayerClearQueue('CLEAR_ENQUEUED');
     this.emit(':responseReady');
   }
+}
+function supportsDisplay() {
+  var hasDisplay =
+  this.event.context &&
+  this.event.context.System &&
+  this.event.context.System.device &&
+  this.event.context.System.device.supportedInterfaces &&
+  this.event.context.System.device.supportedInterfaces.Display
+
+  return hasDisplay;
+}
+
+function makeTemplate(tempPitchChar, tempPitch, tempMultiplier, tempAccidental){
+
+  if (supportsDisplay.call(this))
+  {
+    
+       const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
+                    var tempTitle = 'Playing ' + tempPitchChar
+                    var template = bodyTemplate7.setTitle(tempTitle)
+                                        .setImage(makeImage(streamInfo.image))
+                                        .build();
+                                        
+                    this.response.renderTemplate(template)
+                                        .shouldEndSession(null);
+  }
+  else {
+    this.response.cardRenderer(tempTitle, tempPitchChar, streamInfo.image);
+  }
+return;
 }
