@@ -20,8 +20,8 @@ var streamInfo = {
   cardContent: "Get more details at: https://skilltemplates.com",
   url: 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u',
   image: {
-    largeImageUrl: 'https://s3.amazonaws.com/cdn.dabblelab.com/img/alexa-card-lg.png',
-    smallImageUrl: 'https://s3.amazonaws.com/cdn.dabblelab.com/img/alexa-card-sm.png'
+    largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/tree_big_1024x600.png',
+    smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/tree_big_720x480.png',
   }
 };
 
@@ -225,7 +225,27 @@ var handlers = {
         fileURL = ''; //clear this so it doesn't remain in next pass
 
         //Output to card and voice
-        this.response.cardRenderer('OK', txtOutput);
+        //this.response.cardRenderer('OK', txtOutput);
+        
+        if (supportsDisplay.call(this))
+        {
+          // values used in rendering the body template for Show
+          const makeImage = Alexa.utils.ImageUtils.makeImage;
+          var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/tree_big_1200x800trans.png";
+
+             const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
+                         
+                          var template = bodyTemplate7.setTitle("Playing " + txtOutput)
+                                              .setImage(makeImage(imgAddress))
+                                              .build();
+                                              
+                          this.response.renderTemplate(template)
+                                              .shouldEndSession(null); 
+        }
+        else {
+          this.response.cardRenderer('Now Playing', txtOutput, streamInfo.image);
+        }
+
         this.response.speak(speechOutput);
         this.emit(':responseReady');
     }
@@ -364,7 +384,7 @@ function makeTemplate(tempPitchChar, tempPitch, tempMultiplier, tempAccidental){
   {
     
        const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
-                    var tempTitle = 'Playing ' + tempPitchChar
+                    var tempTitle = 'Now Playing ' + tempPitchChar;
                     var template = bodyTemplate7.setTitle(tempTitle)
                                         .setImage(makeImage(streamInfo.image))
                                         .build();
