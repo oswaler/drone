@@ -6,7 +6,7 @@ Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
 //Base url to build URLs from
 const BASE_URL = 'https://ericoswald.com';
-var fileURL = ''; //sound file
+var audioURL = ''; //sound file
 var imgURL = ''; //image file
 
 //Commonly used message text
@@ -142,7 +142,7 @@ const accidentalToChar = {
   natural: '', //'♮'
   sharp: '♯',
   doublesharp: 'x'
-};
+  };
 
 exports.handler = (event, context, callback) => {
   var alexa = Alexa.handler(event, context, callback);
@@ -226,7 +226,7 @@ var handlers = {
     }
     
     // validate that the user gave a valid accidental
-    else if (['flat', 'natural', 'sharp'].indexOf(accidental) === -1) {
+    else if (['flat', 'natural', 'sharp', '4', '40'].indexOf(accidental) === -1) {
       
       var badAccidental = noteRequested + '. The accidental must be flat, \
       sharp or natural. What note would you like?.';
@@ -235,12 +235,13 @@ var handlers = {
     }
     
     // validate that the user gave a valid multiplier
-    else if (multiplier !== '' && multiplier !== 'double') {
-      
+   
+    else if (multiplier !== '' && ['double', '4'].indexOf(multiplier) === -1) {
       var badMultiplierText = noteRequested + '. If you use three words to describe your note, \
-      the second word must be double. So you can say something like C double \
-      flat, or F double sharp. What note would you like?';
-
+      the second word must be double, or you may specifically ask for an Ay 4 40. \
+      So you can say something like C double \
+      flat, or F double sharp, or Ay 4 40. What note would you like?';
+      const outTest =  pitch + ' ' + multiplier + ' ' + accidental;
       this.emit(':ask', badMultiplierText,badMultiplierText);
     }
 
@@ -253,7 +254,7 @@ var handlers = {
       this.emit(':ask', badCombinationText, badCombinationText);
     }
 
-    //If all checks are passed then play the note
+    //If all checks are passed then play the note and output to card/template
     else {
 
         //Construct spoken output. If pitch is A have Alexa pronounce it as AY
@@ -265,25 +266,40 @@ var handlers = {
           pitchSpeech = pitch;
         }
         const speechOutput = 
-        // message 
           pitchSpeech 
           + (multiplier ? ' ' + multiplier : '')
           + (accidental === 'natural' ? '' : ' ' + accidental);
-
-        //Construct sound file URL
-        fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
-
-        //Construct image file URL
-        imgURL = BASE_URL + imgEndUrl[pitch][multiplier + accidental];
-
-        //Construct printed output
-        const pitchChar = pitch + accidentalToChar[multiplier + accidental];
-        const txtOutput = pitchChar + ' ' + fileURL + ' ' + imgURL;
-        fileURL = ''; //clear this so it doesn't remain in next pass
-
-        //Output to card and voice
-        //this.response.cardRenderer('OK', txtOutput);
         
+          
+        //Construct sound file URL - Check for special case of A440
+        if (['4', '40'].indexOf(accidental) === -1){
+          audioURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
+        }
+        else {
+          audioURL = BASE_URL + '/A440.mp3';
+        }
+
+        //Construct image file URL - Check for special case of A440
+        if (['4', '40'].indexOf(accidental) === -1){
+          imgURL = BASE_URL + imgEndUrl[pitch][multiplier + accidental];
+        }
+        else {
+          imgURL = BASE_URL + '/A440.png';
+        }
+
+        //Construct printed output. Check for special case of A440
+        var pitchChar;
+        if (['4', '40'].indexOf(accidental) === -1) {
+          pitchChar = pitch + accidentalToChar[multiplier + accidental];
+        }
+        else {
+          pitchChar = 'A440';
+        }
+
+        const txtOutput = pitchChar + ' ' + audioURL + ' ' + imgURL;
+        audioURL = ''; //clear this so it doesn't remain in next pass
+
+        //Output to card/template and voice
         if (supportsDisplay.call(this))
         {
           // values used in rendering the body template for Show
@@ -311,16 +327,16 @@ var handlers = {
  
   'PlayStream': function() {
     
-    if (!fileURL) {
+    if (!audioURL) {
       const againText = 'Sorry, I didn\'t understand your request. ' + startSpeech;  
       this.emit(':ask', againText, startReprompt);
     }
 
     else {
-      this.response.cardRenderer('OK', fileURL);
-      this.response.speak('URL is:' + fileURL);
-      //fileURL = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
-      //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', fileURL, fileURL, null, 0);
+      this.response.cardRenderer('OK', audioURL);
+      this.response.speak('URL is:' + audioURL);
+      //audioURL = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
+      //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', audioURL, audioURL, null, 0);
       this.emit(':responseReady');
     }
   },
