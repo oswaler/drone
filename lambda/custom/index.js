@@ -6,7 +6,8 @@ Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
 //Base url to build URLs from
 const BASE_URL = 'https://ericoswald.com';
-var fileURL = '';
+var fileURL = ''; //sound file
+var imgURL = ''; //image file
 
 //Commonly used message text
 const startSpeech = "Welcome to Music Drone. What note would you like? \
@@ -78,6 +79,59 @@ const pitchEndUrl = {
       natural: '/B.mp3',
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
+  }
+};
+
+//Patterns to construct image file URL
+const imgEndUrl = {
+  C: {
+      doubleflat: '/Cdflat.png',
+      flat: '/Cflat.png',
+      natural: '/C.png',
+      sharp: '/Csharp.png',
+      doublesharp: '/Cdsharp.png'
+  }, 
+  D: {
+      doubleflat: '/Ddflat.png',
+      flat: '/Dflat.png',
+      natural: '/D.png',
+      sharp: '/Dsharp.png',
+      doublesharp: '/Ddsharp.png'
+  },
+  E: {
+      doubleflat: '/Edflat.png',
+      flat: '/Eflat.png',
+      natural: '/E.png',
+      sharp: '/Esharp.png',
+      doublesharp: '/Edsharp.png'
+  },
+  F: {
+      doubleflat: '/Fdflat.png',
+      flat: '/Fflat.png',
+      natural: '/F.png',
+      sharp: '/Fsharp.png',
+      doublesharp: '/Fdsharp.png'
+  },
+  G: {
+      doubleflat: '/Gdflat.png',
+      flat: '/Gflat.png',
+      natural: '/G.png',
+      sharp: '/Gsharp.png',
+      doublesharp: '/Gdsharp.png'
+  },
+  A: {
+      doubleflat: '/Adflat.png',
+      flat: '/Aflat.png',
+      natural: '/A.png',
+      sharp: '/Asharp.png',
+      doublesharp: '/Adsharp.png'
+  },
+  B: {
+      doubleflat: '/Bdflat.png',
+      flat: '/Bflat.png',
+      natural: '/B.png',
+      sharp: '/Bsharp.png',
+      doublesharp: '/Bdsharp.png'
   }
 };
 
@@ -219,9 +273,12 @@ var handlers = {
         //Construct sound file URL
         fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
 
+        //Construct image file URL
+        imgURL = BASE_URL + imgEndUrl[pitch][multiplier + accidental];
+
         //Construct printed output
         const pitchChar = pitch + accidentalToChar[multiplier + accidental];
-        const txtOutput = pitchChar + ' ' + fileURL;
+        const txtOutput = pitchChar + ' ' + fileURL + ' ' + imgURL;
         fileURL = ''; //clear this so it doesn't remain in next pass
 
         //Output to card and voice
