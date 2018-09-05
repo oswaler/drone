@@ -1,3 +1,3 @@
-# Audio Stream Starter - Skill Template
+# Music Drone - A skill to play a sustained tone
 
-A starter template for an Alexa audio streaming skill.
+By Gentle Echo Designs
