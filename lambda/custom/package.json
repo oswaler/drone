@@ -1,20 +1,20 @@
 {
-  "name": "Music Drone",
+  "name": "Pitch Drone",
   "version": "1.0.0",
-  "description": "A starter template for an Alexa audio streaming skill.",
+  "description": "A skill that plays a sustained pitch on request.",
   "main": "index.js",
   "keywords": [
     "alexa",
     "skill",
     "audio streaming"
   ],
-  "author": "skilltemplates.com",
+  "author": "Gentle Echo Designs",
   "license": "See license in ../LICENSE.txt",
   "dependencies": {
     "alexa-sdk": "^1.0.25"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/skilltemplates/audio-stream-starter-alexa.git"
+    "url": "https://github.com/oswaler/drone"
   }
 }
