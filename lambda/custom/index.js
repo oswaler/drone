@@ -5,13 +5,13 @@ var Alexa = require('alexa-sdk');
 Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
 //Base url to build URLs from
-const BASE_URL = 'https://ericoswald.com';
+const BASE_URL = 'https://feeds.soundcloud.com/stream/';
 var audioURL = ''; //sound file
 var imgURL = ''; //image file
 
 //Commonly used message text
 const startSpeech = "Welcome to Music Drone. What note would you like? \
-   You can say things like G natural, or F sharp.";
+   You can say things like C, G natural, or F sharp. You can also say AY 4 40.";
    
 const startReprompt = "What note would you like?";
 
@@ -76,7 +76,7 @@ const pitchEndUrl = {
   B: {
       doubleflat: '/A.mp3',
       flat: '/Bflat.mp3',
-      natural: '/B.mp3',
+      natural: '496085943-user-973941472-b-1.mp3',
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
   }
@@ -345,7 +345,7 @@ var handlers = {
    
    const helpSpeech = "I will play a sustained tone for you on the viola. \
    You can ask for any scale tone. You can ask for tones by saying things \
-   like G natural, F sharp, B flat, or C double sharp. \
+   like D, G natural, F sharp, B flat, or C double sharp. \
    You can also ask for an AY Four Forty. If your device has a screen I \
    will show you the note I\'m playing. When you are finished you can say Stop. \
    What note would you like?";
