@@ -5,7 +5,8 @@ var Alexa = require('alexa-sdk');
 Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
 //Base url to build URLs from
-const BASE_URL = 'https://ericoswald.com';
+const SOUNDCLOUD_BASE_URL = 'https://feeds.soundcloud.com/stream/';
+const S3_BASE_URL = 'https://s3.amazonaws.com/ericcricketsnvirginia/';
 var audioURL = ''; //sound file
 var imgURL = ''; //image file
 
@@ -21,15 +22,17 @@ var streamInfo = {
   cardContent: "Get more details at: https://skilltemplates.com",
   url: 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u',
   image: {
-    largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/tree_big_1024x600.png',
-    smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/tree_big_720x480.png',
+    largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1024x600.PNG',
+    smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin720x480.PNG',
   }
 };
 
 
  //Patterns to construct sound file URL
  //Use enharmonics to reduce number of files needed
-const pitchEndUrl = {
+ 
+ //Contains URLs for sound files stored on SoundCloud
+ const pitchSoundcloudEndUrl = {
   C: {
       doubleflat: '/Bflat.mp3',
       flat: '/B.mp3',
@@ -76,7 +79,61 @@ const pitchEndUrl = {
   B: {
       doubleflat: '/A.mp3',
       flat: '/Bflat.mp3',
-      natural: '/B.mp3',
+      natural: '496165830-user-973941472-b-loop-mixdown.mp3',
+      sharp: '/C.mp3',
+      doublesharp: '/Csharp.mp3'
+  }
+};
+
+//Contains sound file URLs for files stored on Amazon S3
+ const pitchS3EndUrl = {
+  C: {
+      doubleflat: '/Bflat.mp3',
+      flat: '/B.mp3',
+      natural: '/C.mp3',
+      sharp: '/Csharp.mp3',
+      doublesharp: '/D.mp3'
+  },
+    
+  D: {
+      doubleflat: '/C.mp3',
+      flat: '/Csharp.mp3',
+      natural: '/D.mp3',
+      sharp: '/Eflat.mp3',
+      doublesharp: '/E.mp3'
+  },
+  E: {
+      doubleflat: '/D.mp3',
+      flat: '/Eflat.mp3',
+      natural: '/E.mp3',
+      sharp: '/F.mp3',
+      doublesharp: '/Fsharp.mp3'
+  },
+  F: {
+      doubleflat: '/Eflat.mp3',
+      flat: '/E.mp3',
+      natural: '/F.mp3',
+      sharp: '/Fsharp.mp3',
+      doublesharp: '/G.mp3'
+  },
+  G: {
+      doubleflat: '/F.mp3',
+      flat: '/Fsharp.mp3',
+      natural: '/G.mp3',
+      sharp: '/Aflat.mp3',
+      doublesharp: '/A.mp3'
+  },
+  A: {
+      doubleflat: '/G.mp3',
+      flat: '/Aflat.mp3',
+      natural: '/A.mp3',
+      sharp: '/Bflat.mp3',
+      doublesharp: '/B.mp3'
+  },
+  B: {
+      doubleflat: '/A.mp3',
+      flat: '/Bflat.mp3',
+      natural: '496165830-user-973941472-b-loop-mixdown.mp3',
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
   }
@@ -248,8 +305,8 @@ var handlers = {
      // validate that the user didn't say "double natural"
     else if (multiplier === 'double' && accidental === 'natural') {
      
-      var badCombinationText = noteRequested + '. There is no such thing \
-      as a note that is double natural. ' + 'What note would you like?';
+      var badCombinationText = noteRequested + '. Notes cannot be \
+       double natural. ' + 'What note would you like?';
       
       this.emit(':ask', badCombinationText, badCombinationText);
     }
@@ -273,18 +330,18 @@ var handlers = {
           
         //Construct sound file URL - Check for special case of A440
         if (['4', '40'].indexOf(accidental) === -1){
-          audioURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
+          audioURL = SOUNDCLOUD_BASE_URL + pitchSoundcloudEndUrl[pitch][multiplier + accidental];
         }
         else {
-          audioURL = BASE_URL + '/A440.mp3';
+          audioURL = SOUNDCLOUD_BASE_URL + '/A440.mp3';
         }
 
         //Construct image file URL - Check for special case of A440
         if (['4', '40'].indexOf(accidental) === -1){
-          imgURL = BASE_URL + imgEndUrl[pitch][multiplier + accidental];
+          imgURL = S3_BASE_URL + imgEndUrl[pitch][multiplier + accidental];
         }
         else {
-          imgURL = BASE_URL + '/A440.png';
+          imgURL = S3_BASE_URL + 'A440.png';
         }
 
         //Construct printed output. Check for special case of A440
@@ -297,14 +354,14 @@ var handlers = {
         }
 
         const txtOutput = pitchChar + ' ' + audioURL + ' ' + imgURL;
-        audioURL = ''; //clear this so it doesn't remain in next pass
-
+        //audioURL = ''; //clear this so it doesn't remain in next pass
+        
         //Output to card/template and voice
         if (supportsDisplay.call(this))
         {
           // values used in rendering the body template for Show
           const makeImage = Alexa.utils.ImageUtils.makeImage;
-          var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/tree_big_1200x800trans.png";
+          var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1200x800.PNG";
 
              const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
                          
@@ -316,10 +373,11 @@ var handlers = {
                                               .shouldEndSession(null); 
         }
         else {
-          this.response.cardRenderer('Now Playing', txtOutput, streamInfo.image);
+          this.response.cardRenderer('Now Playing' + pitchChar, 'Thank you for using Music Drone!' + txtOutput, streamInfo.image);
         }
-
-        this.response.speak(speechOutput);
+        this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', audioURL, 1, null, 0);
+        console.log();
+        //this.response.speak(speechOutput);
         this.emit(':responseReady');
     }
   },
@@ -327,18 +385,18 @@ var handlers = {
  
   'PlayStream': function() {
     
-    if (!audioURL) {
+    //if (!audioURL) {
       const againText = 'Sorry, I didn\'t understand your request. ' + startSpeech;  
       this.emit(':ask', againText, startReprompt);
-    }
-
+    //}
+    /*
     else {
       this.response.cardRenderer('OK', audioURL);
       this.response.speak('URL is:' + audioURL);
       //audioURL = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
       //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', audioURL, audioURL, null, 0);
       this.emit(':responseReady');
-    }
+    }*/
   },
   'AMAZON.HelpIntent': function() {
    // On help request explain what user can do and wait for a response.
@@ -432,7 +490,9 @@ var audioEventHandlers = {
     this.emit(':responseReady');
   },
   'PlaybackNearlyFinished': function() {
-    this.response.audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
+    console.log()
+    this.response.audioPlayerPlay('REPLACE_ALL', audioURL, audioURL, null, 0);
+    //this.response.audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
     this.emit(':responseReady');
   },
   'PlaybackFailed': function() {
