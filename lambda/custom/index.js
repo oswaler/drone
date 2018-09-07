@@ -142,55 +142,197 @@ var streamInfo = {
 //Patterns to construct image file URL
 const imgEndUrl = {
   C: {
-      doubleflat: '/Cdflat.png',
-      flat: '/Cflat.png',
-      natural: '/C.png',
-      sharp: '/Csharp.png',
-      doublesharp: '/Cdsharp.png'
+      doubleflat: {
+        largeImageURL: S3_BASE_URL + 'Cdflat1024x600.png',
+        smallImageURL: S3_BASE_URL + 'Cdflat720x480.png',
+        xlargeImageUrl: S3_BASE_URL + 'Cdflat1200x800.png'
+    },
+      flat: {
+        largeImageURL: S3_BASE_URL + 'Cflat1024x600.png',
+        smallImageURL: S3_BASE_URL + 'Cflat720x480.png',
+        xlargeImageUrl: S3_BASE_URL + 'Cflat1200x800.png'
+    },
+      natural: {
+        largeImageURL: S3_BASE_URL + 'C1024x600.png',
+        smallImageURL: S3_BASE_URL + 'C720x480.png',
+        xlargeImageUrl: S3_BASE_URL + 'C1200x800.png'
+    },
+      sharp: {
+        largeImageURL: S3_BASE_URL + 'Csharp1024x600.png',
+        smallImageURL: S3_BASE_URL + 'Csharp720x480.png',
+        xlargeImageUrl: S3_BASE_URL + 'Csharp1200x800.png'
+    },
+      doublesharp: {
+        largeImageURL: S3_BASE_URL + 'Cdsharp1024x600.png',
+        smallImageURL: S3_BASE_URL + 'Cdsharp720x480.png',
+        xlargeImageUrl: S3_BASE_URL + 'Cdsharp1200x800.png'
+    },
   }, 
   D: {
-      doubleflat: '/Ddflat.png',
-      flat: '/Dflat.png',
-      natural: '/D.png',
-      sharp: '/Dsharp.png',
-      doublesharp: '/Ddsharp.png'
+    doubleflat: {
+      largeImageURL: S3_BASE_URL + 'Ddflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Ddflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Ddflat1200x800.png'
   },
+    flat: {
+      largeImageURL: S3_BASE_URL + 'Dflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Dflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Dflat1200x800.png'
+  },
+    natural: {
+      largeImageURL: S3_BASE_URL + 'D1024x600.png',
+      smallImageURL: S3_BASE_URL + 'D720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'D1200x800.png'
+  },
+    sharp: {
+      largeImageURL: S3_BASE_URL + 'Dsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Dsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Dsharp1200x800.png'
+  },
+    doublesharp: {
+      largeImageURL: S3_BASE_URL + 'Ddsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Ddsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Ddsharp1200x800.png'
+  },
+},
   E: {
-      doubleflat: '/Edflat.png',
-      flat: '/Eflat.png',
-      natural: '/E.png',
-      sharp: '/Esharp.png',
-      doublesharp: '/Edsharp.png'
+    doubleflat: {
+      largeImageURL: S3_BASE_URL + 'Edflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Edflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Edflat1200x800.png'
   },
+    flat: {
+      largeImageURL: S3_BASE_URL + 'Eflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Eflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Eflat1200x800.png'
+  },
+    natural: {
+      largeImageURL: S3_BASE_URL + 'E1024x600.png',
+      smallImageURL: S3_BASE_URL + 'E720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'E1200x800.png'
+  },
+    sharp: {
+      largeImageURL: S3_BASE_URL + 'Esharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Esharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Esharp1200x800.png'
+  },
+    doublesharp: {
+      largeImageURL: S3_BASE_URL + 'Edsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Edsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Edsharp1200x800.png'
+  },
+},
   F: {
-      doubleflat: '/Fdflat.png',
-      flat: '/Fflat.png',
-      natural: '/F.png',
-      sharp: '/Fsharp.png',
-      doublesharp: '/Fdsharp.png'
+    doubleflat: {
+      largeImageURL: S3_BASE_URL + 'Fdflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Fdflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Fdflat1200x800.png'
   },
+    flat: {
+      largeImageURL: S3_BASE_URL + 'Fflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Fflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Fflat1200x800.png'
+  },
+    natural: {
+      largeImageURL: S3_BASE_URL + 'F1024x600.png',
+      smallImageURL: S3_BASE_URL + 'F720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'F1200x800.png'
+  },
+    sharp: {
+      largeImageURL: S3_BASE_URL + 'Fsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Fsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Fsharp1200x800.png'
+  },
+    doublesharp: {
+      largeImageURL: S3_BASE_URL + 'Fdsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Fdsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Fdsharp1200x800.png'
+  },
+},
   G: {
-      doubleflat: '/Gdflat.png',
-      flat: '/Gflat.png',
-      natural: '/G.png',
-      sharp: '/Gsharp.png',
-      doublesharp: '/Gdsharp.png'
+    doubleflat: {
+      largeImageURL: S3_BASE_URL + 'Gdflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Gdflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Gdflat1200x800.png'
   },
+    flat: {
+      largeImageURL: S3_BASE_URL + 'Gflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Gflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Gflat1200x800.png'
+  },
+    natural: {
+      largeImageURL: S3_BASE_URL + 'G1024x600.png',
+      smallImageURL: S3_BASE_URL + 'G720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'G1200x800.png'
+  },
+    sharp: {
+      largeImageURL: S3_BASE_URL + 'Gsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Gsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Gsharp1200x800.png'
+
+  },
+    doublesharp: {
+      largeImageURL: S3_BASE_URL + 'Gdsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Gdsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Gdsharp1200x800.png'
+  },
+},
   A: {
-      doubleflat: '/Adflat.png',
-      flat: '/Aflat.png',
-      natural: '/A.png',
-      sharp: '/Asharp.png',
-      doublesharp: '/Adsharp.png'
+    doubleflat: {
+      largeImageURL: S3_BASE_URL + 'Adflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Adflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Adflat1200x800.png'
   },
+    flat: {
+      largeImageURL: S3_BASE_URL + 'Aflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Aflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Aflat1200x800.png'
+  },
+    natural: {
+      largeImageURL: S3_BASE_URL + 'A1024x600.png',
+      smallImageURL: S3_BASE_URL + 'A720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'A1200x800.png'
+  },
+    sharp: {
+      largeImageURL: S3_BASE_URL + 'Asharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Asharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Asharp1200x800.png'
+  },
+    doublesharp: {
+      largeImageURL: S3_BASE_URL + 'Adsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Adsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Adsharp1200x800.png'
+  },
+},
   B: {
-      doubleflat: '/Bdflat.png',
-      flat: '/Bflat.png',
-      natural: '/B.png',
-      sharp: '/Bsharp.png',
-      doublesharp: '/Bdsharp.png'
+    doubleflat: {
+      largeImageURL: S3_BASE_URL + 'Bdflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Bdflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Bdflat1200x800.png'
+  },
+    flat: {
+      largeImageURL: S3_BASE_URL + 'Bflat1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Bflat720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Bflat1200x800.png'
+  },
+    natural: {
+      smallImageUrl: S3_BASE_URL + 'B720x480.png',
+      largeImageUrl: S3_BASE_URL + 'B1024x600.png',
+      xlargeImageUrl: S3_BASE_URL + 'B1200x800.png'
+  },
+    sharp: {
+      largeImageURL: S3_BASE_URL + 'Bsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Bsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Bsharp1200x800.png'
+  },
+    doublesharp: {
+      largeImageURL: S3_BASE_URL + 'Bdsharp1024x600.png',
+      smallImageURL: S3_BASE_URL + 'Bdsharp720x480.png',
+      xlargeImageUrl: S3_BASE_URL + 'Bdsharp1200x800.png'
   }
+}
 };
+
 
 //Used for translating accidental text to appropriate character
 const accidentalToChar = {
@@ -361,7 +503,8 @@ var handlers = {
         {
           // values used in rendering the body template for Show
           const makeImage = Alexa.utils.ImageUtils.makeImage;
-          var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1200x800.PNG";
+          var imgAddress = imgEndUrl[pitch][multiplier + accidental].xlargeImageUrl;
+          //var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1200x800.PNG";
 
              const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
                          
@@ -373,37 +516,9 @@ var handlers = {
                                               .shouldEndSession(null); 
         }
         else {
-          const imgTestHold = {
-            B: {
-                doubleflat: {
-                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
-                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
-                  xlargeImageURL: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png'
-                },
-                flat:  {
-                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
-                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
-                  xlargeImageURL: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png'
-                },
-                natural:  {
-                  smallImageUrl: S3_BASE_URL + 'B720x480.png',
-                  largeImageUrl: S3_BASE_URL + 'B1024x600.png',
-                  xlargeImageUrl: S3_BASE_URL + 'B1200x800.png'
-                },
-                sharp:  {
-                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
-                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
-                  xlargeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/B1024x600.png'
-                },
-                doublesharp:  {
-                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
-                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
-                  xlargeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/B1024x600.png'
-                }
-            }, 
-          }
          
-          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Music Drone!', imgTestHold[pitch][multiplier + accidental]);
+         
+          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Music Drone!', imgEndUrl[pitch][multiplier + accidental]);
           
         }
         this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', audioURL, 1, null, 0);
