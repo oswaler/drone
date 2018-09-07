@@ -5,29 +5,91 @@ var Alexa = require('alexa-sdk');
 Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
 //Base url to build URLs from
-const BASE_URL = 'https://ericoswald.com';
-var fileURL = '';
+const SOUNDCLOUD_BASE_URL = 'https://feeds.soundcloud.com/stream/';
+const S3_BASE_URL = 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/';
+var audioURL = ''; //sound file
+var imgURL = ''; //image file
 
 //Commonly used message text
-const startSpeech = "Welcome to Music Drone. What note would you like? \
-   You can say things like G natural, or F sharp.";
+const startSpeech = "Welcome to Pitch Drone. What note would you like? \
+   You can say things like C, G natural, or F sharp. You can also say AY 4 40.";
    
 const startReprompt = "What note would you like?";
 
+//Important variable passed through program
+
+
+
 var streamInfo = {
-  title: 'Audio Stream Starter',
-  subtitle: 'A starter template for an Alexa audio streaming skill.',
-  cardContent: "Get more details at: https://skilltemplates.com",
-  url: 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u',
+  title: 'Pitch Drone Audio',
+  subtitle: 'Plays a natural tone pich.',
+  cardContent: "",
+  url: '',
   image: {
-    largeImageUrl: 'https://s3.amazonaws.com/cdn.dabblelab.com/img/alexa-card-lg.png',
-    smallImageUrl: 'https://s3.amazonaws.com/cdn.dabblelab.com/img/alexa-card-sm.png'
+    largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1024x600.PNG',
+    smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin720x480.PNG',
   }
 };
 
  //Patterns to construct sound file URL
  //Use enharmonics to reduce number of files needed
-const pitchEndUrl = {
+ 
+ //Contains URLs for sound files stored on SoundCloud
+ const pitchSoundcloudEndUrl = {
+  C: {
+      doubleflat: '/Bflat.mp3',
+      flat: '/B.mp3',
+      natural: '/C.mp3',
+      sharp: '/Csharp.mp3',
+      doublesharp: '/D.mp3'
+  },
+    
+  D: {
+      doubleflat: '/C.mp3',
+      flat: '/Csharp.mp3',
+      natural: '/D.mp3',
+      sharp: '/Eflat.mp3',
+      doublesharp: '/E.mp3'
+  },
+  E: {
+      doubleflat: '/D.mp3',
+      flat: '/Eflat.mp3',
+      natural: '/E.mp3',
+      sharp: '/F.mp3',
+      doublesharp: '/Fsharp.mp3'
+  },
+  F: {
+      doubleflat: '/Eflat.mp3',
+      flat: '/E.mp3',
+      natural: '/F.mp3',
+      sharp: '/Fsharp.mp3',
+      doublesharp: '/G.mp3'
+  },
+  G: {
+      doubleflat: '/F.mp3',
+      flat: '/Fsharp.mp3',
+      natural: '/G.mp3',
+      sharp: '/Aflat.mp3',
+      doublesharp: '/A.mp3'
+  },
+  A: {
+      doubleflat: '/G.mp3',
+      flat: '/Aflat.mp3',
+      natural: '/A.mp3',
+      sharp: '/Bflat.mp3',
+      doublesharp: '/B.mp3'
+  },
+  B: {
+      doubleflat: '/A.mp3',
+      flat: '496686249-user-973941472-bflat.mp3',
+      natural: '496686048-user-973941472-b-1.mp3',
+      sharp: '/C.mp3',
+      doublesharp: '/Csharp.mp3'
+  }
+};
+
+//Contains sound file URLs for files stored on Amazon S3
+ const pitchS3EndUrl = {
   C: {
       doubleflat: '/Bflat.mp3',
       flat: '/B.mp3',
@@ -74,10 +136,168 @@ const pitchEndUrl = {
   B: {
       doubleflat: '/A.mp3',
       flat: '/Bflat.mp3',
-      natural: '/B.mp3',
+      natural: '496165830-user-973941472-b-loop-mixdown.mp3',
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
   }
+};
+
+//Patterns to construct image file URL
+const imgEndUrl = {
+  C: {
+      doubleflat: {
+        largeImageURL:'/Cdflat1024x600.png',
+        smallImageURL: '/Cdflat720x480.png',
+    },
+      flat: {
+        largeImageURL:'/Cflat1024x600.png',
+        smallImageURL: '/Cflat720x480.png',
+    },
+      natural: {
+        largeImageURL:'/C1024x600.png',
+        smallImageURL: '/C720x480.png',
+    },
+      sharp: {
+        largeImageURL:'/Csharp1024x600.png',
+        smallImageURL: '/Csharp720x480.png',
+    },
+      doublesharp: {
+        largeImageURL:'/Cdsharp1024x600.png',
+        smallImageURL: '/Cdsharp720x480.png',
+    },
+  }, 
+  D: {
+    doubleflat: {
+      largeImageURL:'/Ddflat1024x600.png',
+      smallImageURL: '/Ddflat720x480.png',
+  },
+    flat: {
+      largeImageURL:'/Dflat1024x600.png',
+      smallImageURL: '/Dflat720x480.png',
+  },
+    natural: {
+      largeImageURL:'/D1024x600.png',
+      smallImageURL: '/D720x480.png',
+  },
+    sharp: {
+      largeImageURL:'/Dsharp1024x600.png',
+      smallImageURL: '/Dsharp720x480.png',
+  },
+    doublesharp: {
+      largeImageURL:'/Ddsharp1024x600.png',
+      smallImageURL: '/Ddsharp720x480.png',
+  },
+},
+  E: {
+    doubleflat: {
+      largeImageURL:'/Edflat1024x600.png',
+      smallImageURL: '/Edflat720x480.png',
+  },
+    flat: {
+      largeImageURL:'/Eflat1024x600.png',
+      smallImageURL: '/Eflat720x480.png',
+  },
+    natural: {
+      largeImageURL:'/E1024x600.png',
+      smallImageURL: '/E720x480.png',
+  },
+    sharp: {
+      largeImageURL:'/Esharp1024x600.png',
+      smallImageURL: '/Esharp720x480.png',
+  },
+    doublesharp: {
+      largeImageURL:'/Edsharp1024x600.png',
+      smallImageURL: '/Edsharp720x480.png',
+  },
+},
+  F: {
+    doubleflat: {
+      largeImageURL:'/Fdflat1024x600.png',
+      smallImageURL: '/Fdflat720x480.png',
+  },
+    flat: {
+      largeImageURL:'/Fflat1024x600.png',
+      smallImageURL: '/Fflat720x480.png',
+  },
+    natural: {
+      largeImageURL:'/F1024x600.png',
+      smallImageURL: '/F720x480.png',
+  },
+    sharp: {
+      largeImageURL:'/Fsharp1024x600.png',
+      smallImageURL: '/Fsharp720x480.png',
+  },
+    doublesharp: {
+      largeImageURL:'/Fdsharp1024x600.png',
+      smallImageURL: '/Fdsharp720x480.png',
+  },
+},
+  G: {
+    doubleflat: {
+      largeImageURL:'/Gdflat1024x600.png',
+      smallImageURL: '/Gdflat720x480.png',
+  },
+    flat: {
+      largeImageURL:'/Gflat1024x600.png',
+      smallImageURL: '/Gflat720x480.png',
+  },
+    natural: {
+      largeImageURL:'/G1024x600.png',
+      smallImageURL: '/G720x480.png',
+  },
+    sharp: {
+      largeImageURL:'/Gsharp1024x600.png',
+      smallImageURL: '/Gsharp720x480.png',
+  },
+    doublesharp: {
+      largeImageURL:'/Gdsharp1024x600.png',
+      smallImageURL: '/Gdsharp720x480.png',
+  },
+},
+  A: {
+    doubleflat: {
+      largeImageURL:'/Adflat1024x600.png',
+      smallImageURL: '/Adflat720x480.png',
+  },
+    flat: {
+      largeImageURL:'/Aflat1024x600.png',
+      smallImageURL: '/Aflat720x480.png',
+  },
+    natural: {
+      largeImageURL:'/A1024x600.png',
+      smallImageURL: '/A720x480.png',
+  },
+    sharp: {
+      largeImageURL:'/Asharp1024x600.png',
+      smallImageURL: '/Asharp720x480.png',
+  },
+    doublesharp: {
+      largeImageURL:'/Adsharp1024x600.png',
+      smallImageURL: '/Adsharp720x480.png',
+  },
+},
+  B: {
+    doubleflat: {
+      largeImageURL:'/Bdflat1024x600.png',
+      smallImageURL: '/Bdflat720x480.png',
+  },
+    flat: {
+      largeImageURL:'/Bflat1024x600.png',
+      smallImageURL: '/Bflat720x480.png',
+  },
+    natural: {
+      largeImageURL:'/B1024x600.png',
+      smallImageURL: '/B720x480.png',
+  },
+    sharp: {
+      largeImageURL:'/Bsharp1024x600.png',
+      smallImageURL: '/Bsharp720x480.png',
+  },
+    doublesharp: {
+      largeImageURL:'/Bdsharp1024x600.png',
+      smallImageURL: '/Bdsharp720x480.png',
+  },
+},
 };
 
 //Used for translating accidental text to appropriate character
@@ -87,7 +307,7 @@ const accidentalToChar = {
   natural: '', //'♮'
   sharp: '♯',
   doublesharp: 'x'
-};
+  };
 
 exports.handler = (event, context, callback) => {
   var alexa = Alexa.handler(event, context, callback);
@@ -102,7 +322,7 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-   //const startSpeech = "Welcome to Music Drone. What note would you like? \
+   //const startSpeech = "Welcome to Pitch Drone. What note would you like? \
    //You can say things like G natural, or F sharp.";
    
    //const startReprompt = "What note would you like?";
@@ -113,11 +333,11 @@ var handlers = {
   },
   'GetPitchIntent': function() {
 
-       //might need to change pitch filter to allow any letter
-       //so wrong values can be handled gracefully
-       //probably need to add all letters to intent too.
+    //Get pitch, multiplier and accidental and translate them to a standard format.
+    //pitch is var rather than const because some cleanup code later translates
+    //     common Alexa misunderstandings in pitch letters
     const pitchValue = this.event.request.intent.slots.pitch.value;
-    var pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
+    var   pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
     const firstModValue = this.event.request.intent.slots.FirstModifier.value;
     const firstMod = (firstModValue || '').trim().toLowerCase();
     const secondModValue = this.event.request.intent.slots.SecondModifier.value;
@@ -171,7 +391,7 @@ var handlers = {
     }
     
     // validate that the user gave a valid accidental
-    else if (['flat', 'natural', 'sharp'].indexOf(accidental) === -1) {
+    else if (['flat', 'natural', 'sharp', '4', '40'].indexOf(accidental) === -1) {
       
       var badAccidental = noteRequested + '. The accidental must be flat, \
       sharp or natural. What note would you like?.';
@@ -180,103 +400,132 @@ var handlers = {
     }
     
     // validate that the user gave a valid multiplier
-    else if (multiplier !== '' && multiplier !== 'double') {
-      
+   
+    else if (multiplier !== '' && ['double', '4'].indexOf(multiplier) === -1) {
       var badMultiplierText = noteRequested + '. If you use three words to describe your note, \
-      the second word must be double. So you can say something like C double \
-      flat, or F double sharp. What note would you like?';
-
+      the second word must be double, or you may specifically ask for an Ay 4 40. \
+      So you can say something like C double \
+      flat, or F double sharp, or Ay 4 40. What note would you like?';
+      const outTest =  pitch + ' ' + multiplier + ' ' + accidental;
       this.emit(':ask', badMultiplierText,badMultiplierText);
     }
 
      // validate that the user didn't say "double natural"
     else if (multiplier === 'double' && accidental === 'natural') {
      
-      var badCombinationText = noteRequested + '. There is no such thing \
-      as a note that is double natural. ' + 'What note would you like?';
+      var badCombinationText = noteRequested + '. Notes cannot be \
+       double natural. ' + 'What note would you like?';
       
       this.emit(':ask', badCombinationText, badCombinationText);
     }
 
-    //If all checks are passed then play the note
+    //If all checks are passed then play the note and output to card/template
     else {
 
-        //Construct spoken output
+        //Construct spoken output. If pitch is A have Alexa pronounce it as AY
+        var pitchSpeech
+        if (pitch == 'A'){
+          pitchSpeech = 'AY';
+        }
+        else {
+          pitchSpeech = pitch;
+        }
         const speechOutput = 
-        // message 
-          pitch 
+          'OK, Heres a ' + pitchSpeech 
           + (multiplier ? ' ' + multiplier : '')
           + (accidental === 'natural' ? '' : ' ' + accidental);
+        
+          
+        //Construct sound file URL - Check for special case of A440
+        if (['4', '40'].indexOf(accidental) === -1){
+          audioURL = SOUNDCLOUD_BASE_URL + pitchSoundcloudEndUrl[pitch][multiplier + accidental];
+        }
+        else {
+          audioURL = SOUNDCLOUD_BASE_URL + '/A440.mp3';
+        }
 
-        //Construct sound file URL
-        fileURL = BASE_URL + pitchEndUrl[pitch][multiplier + accidental];
+        //Construct image file URL - Check for special case of A440
+        if (['4', '40'].indexOf(accidental) === -1){
+          imgURL = S3_BASE_URL + imgEndUrl[pitch][multiplier + accidental];
+        }
+        else {
+          imgURL = S3_BASE_URL + 'A440.png';
+        }
 
-        //Construct printed output
-        const pitchChar = pitch + accidentalToChar[multiplier + accidental];
-        const txtOutput = pitchChar + ' ' + fileURL;
-        fileURL = ''; //clear this so it doesn't remain in next pass
+        //Construct printed output. Check for special case of A440
+        var pitchChar;
+        if (['4', '40'].indexOf(accidental) === -1) {
+          pitchChar = pitch + accidentalToChar[multiplier + accidental];
+        }
+        else {
+          pitchChar = 'A440';
+        }
 
-        //Output to card and voice
-        this.response.cardRenderer('OK', txtOutput);
-        this.response.speak(speechOutput);
+        const txtOutput = pitchChar + ' ' + audioURL + ' ' + imgURL;
+        //audioURL = ''; //clear this so it doesn't remain in next pass
+        
+        //Output to card/template and voice
+        if (supportsDisplay.call(this))
+        {
+          // values used in rendering the body template for Show
+          const makeImage = Alexa.utils.ImageUtils.makeImage;
+          var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1200x800.PNG";
+
+             const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
+                         
+                          var template = bodyTemplate7.setTitle("Playing " + txtOutput)
+                                              .setImage(makeImage(imgAddress))
+                                              .build();
+                                              
+                          this.response.renderTemplate(template)
+                                              .shouldEndSession(null); 
+        }
+       /* else {
+          var imgTestHold = {
+            title: 'Pitch Drone Audio',
+            subtitle: 'Plays a natural tone pich.',
+            cardContent: "",
+            url: '',
+            image: {
+              largeImageUrl: imgEndUrl[pitch][multiplier + accidental].largeImageURL,
+              smallImageUrl: imgEndUrl[pitch][multiplier + accidental].smallImageURL,
+            }
+           };
+          //this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone! \
+          //' + txtOutput, imgTestHold.image);
+        }*/
+          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone! \
+          ' + txtOutput, streamInfo.image);
+        }
+        this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', audioURL, 1, null, 0);
+        console.log();
+        //this.response.speak(speechOutput);
         this.emit(':responseReady');
-    }
-  },
+    },
+  
 
-  'noteIntent': function() {
-    //this.emit('PlayStream');
-   
-    //Create objects to hold possible interpretations of each note
-
-  var arrC = ['c.', 'C', 'c', 'C natural', 'attrill', 'trill', 'See natural', 'seat', 'seat natural'];
-  var arrD = ['d.', 'd', 'D', 'die', 'dye', 'TV', 'TV natural', 'Dean Hatcher', 'teenager','diner','diner natural','the natural',
-                'at the natural','D natural','t natural',
-                't. natural','denaturalize', 'denatural', 't.','T', 'd flat', 'die flat'];
-  
-  // Get note read from user 
-  let slotValue = this.event.request.intent.slots.note.value; 
-  var txtResult;
-   
-  //Find out what note was chosen and assign proper statement
-  if (arrC.indexOf(slotValue) != -1){
-    txtResult = "It was the C natural.";
-  }
-  else if(arrD.indexOf(slotValue) != -1){
-    txtResult = "It was the D.";
-  }
-   else {
-     txtResult= "I didn't get it.";
-   }
-  
-   let outSpeech = txtResult + " Original was " + slotValue;
-  
-   // play result back
-   this.response.cardRenderer(slotValue, txtResult);
-  this.response.speak(outSpeech);
-  this.emit(':responseReady');
-  },
 
   'PlayStream': function() {
     
-    if (!fileURL) {
-      const againText = 'Sorry, I didn\'t understand your request.' + startSpeech;  
+    //if (!audioURL) {
+      const againText = 'Sorry, I didn\'t understand your request. ' + startSpeech;  
       this.emit(':ask', againText, startReprompt);
-    }
-
+    //}
+    /*
     else {
-      this.response.cardRenderer('OK', fileURL);
-      this.response.speak('URL is:' + fileURL);
-      //fileURL = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
-      //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', fileURL, fileURL, null, 0);
+      this.response.cardRenderer('OK', audioURL);
+      this.response.speak('URL is:' + audioURL);
+      //audioURL = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
+      //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', audioURL, audioURL, null, 0);
       this.emit(':responseReady');
-    }
+    }*/
   },
   'AMAZON.HelpIntent': function() {
    // On help request explain what user can do and wait for a response.
    
    const helpSpeech = "I will play a sustained tone for you on the viola. \
    You can ask for any scale tone. You can ask for tones by saying things \
-   like G natural, F sharp, B flat, or C double sharp. \
+   like D, G natural, F sharp, B flat, or C double sharp. \
    You can also ask for an AY Four Forty. If your device has a screen I \
    will show you the note I\'m playing. When you are finished you can say Stop. \
    What note would you like?";
@@ -313,6 +562,35 @@ var handlers = {
     this.emit('AMAZON.StopIntent');
   },
   'AMAZON.StopIntent': function() {
+    
+    //Output to card/template and voice
+    if (supportsDisplay.call(this))
+    {
+      // values used in rendering the body template for Show
+      const makeImage = Alexa.utils.ImageUtils.makeImage;
+      var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1200x800.png";
+
+         const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
+                     
+                      var template = bodyTemplate7.setTitle("Played: ")
+                                          .setImage(makeImage(imgAddress))
+                                          .build();
+                                          
+                      this.response.renderTemplate(template)
+                                          .shouldEndSession(null); 
+    }
+    else {
+      var endImage = {
+        image: {
+          largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
+          smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
+        }
+      };
+      this.response.cardRenderer('Hope you had a good practice!', 'Thank you for using Pitch Drone! \
+     Your reviews help guide us in developing better tools. Please don\'t hesitate to\
+ contact us at gentleechodesigns@gmail.com', endImage.image);
+    }
+    
     this.response.speak('Ok').audioPlayerStop();
     this.emit(':responseReady');
   },
@@ -332,7 +610,7 @@ var handlers = {
     this.emit('AMAZON.StartOverIntent');
   },
   'AMAZON.StartOverIntent': function() {
-    this.response.speak('Sorry. I can\'t do that yet.');
+    this.response.speak('Sorry. I can\'t do that.');
     this.emit(':responseReady');
   },
   'PlayCommandIssued': function() {
@@ -363,11 +641,43 @@ var audioEventHandlers = {
     this.emit(':responseReady');
   },
   'PlaybackNearlyFinished': function() {
-    this.response.audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
+    console.log()
+    this.response.audioPlayerPlay('REPLACE_ALL', audioURL, audioURL, null, 0);
+    //this.response.audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
     this.emit(':responseReady');
   },
   'PlaybackFailed': function() {
     this.response.audioPlayerClearQueue('CLEAR_ENQUEUED');
     this.emit(':responseReady');
   }
+}
+function supportsDisplay() {
+  var hasDisplay =
+  this.event.context &&
+  this.event.context.System &&
+  this.event.context.System.device &&
+  this.event.context.System.device.supportedInterfaces &&
+  this.event.context.System.device.supportedInterfaces.Display
+
+  return hasDisplay;
+}
+
+function makeTemplate(tempPitchChar, tempPitch, tempMultiplier, tempAccidental){
+
+  if (supportsDisplay.call(this))
+  {
+    
+       const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
+                    var tempTitle = 'Now Playing ' + tempPitchChar;
+                    var template = bodyTemplate7.setTitle(tempTitle)
+                                        .setImage(makeImage(streamInfo.image))
+                                        .build();
+                                        
+                    this.response.renderTemplate(template)
+                                        .shouldEndSession(null);
+  }
+  else {
+    this.response.cardRenderer(tempTitle, tempPitchChar, streamInfo.image);
+  }
+return;
 }

@@ -16,8 +16,8 @@
           ],
           "name": "pitch-drone",
           "description": "Note drone.",
-          "smallIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-sm.png",
-          "largeIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-lg.png"
+          "smallIconUri": "https://s3.amazonaws.com/ericcricketsnvirginia/drone/pitchdronelogo108.png",
+          "largeIconUri": "https://s3.amazonaws.com/ericcricketsnvirginia/drone/pitchdronelogo512.png"
         }
       },
       "isAvailableWorldwide": true,

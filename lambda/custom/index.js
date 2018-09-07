@@ -11,7 +11,7 @@ var audioURL = ''; //sound file
 var imgURL = ''; //image file
 
 //Commonly used message text
-const startSpeech = "Welcome to Pitch Drone. What note would you like? \
+const startSpeech = "Welcome to Music Drone. What note would you like? \
    You can say things like C, G natural, or F sharp. You can also say AY 4 40.";
    
 const startReprompt = "What note would you like?";
@@ -22,8 +22,8 @@ var streamInfo = {
   cardContent: "Get more details at: https://skilltemplates.com",
   url: 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u',
   image: {
-    largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1024x600.PNG',
-    smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin720x480.PNG',
+    largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
+    smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
   }
 };
 
@@ -78,8 +78,8 @@ var streamInfo = {
   },
   B: {
       doubleflat: '/A.mp3',
-      flat: '/Bflat.mp3',
-      natural: '496165830-user-973941472-b-loop-mixdown.mp3',
+      flat: '496686249-user-973941472-bflat.mp3',
+      natural: '496686048-user-973941472-b-1.mp3',
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
   }
@@ -214,7 +214,7 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-   //const startSpeech = "Welcome to Pitch Drone. What note would you like? \
+   //const startSpeech = "Welcome to Music Drone. What note would you like? \
    //You can say things like G natural, or F sharp.";
    
    //const startReprompt = "What note would you like?";
@@ -373,7 +373,7 @@ var handlers = {
                                               .shouldEndSession(null); 
         }
         else {
-          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, streamInfo.image);
+          this.response.cardRenderer('Now Playing' + pitchChar, 'Thank you for using Music Drone!' + txtOutput, streamInfo.image);
         }
         this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', audioURL, 1, null, 0);
         console.log();
@@ -441,25 +441,32 @@ var handlers = {
   },
   'AMAZON.StopIntent': function() {
     
-    //Output to card/template and voice
     if (supportsDisplay.call(this))
-    {
-      // values used in rendering the body template for Show
-      const makeImage = Alexa.utils.ImageUtils.makeImage;
-      var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1200x800.PNG";
+{
+    // values used in rendering the body template for Show
+     const makeImage = Alexa.utils.ImageUtils.makeImage;
+     var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1200x800.png";
+     const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
+                  
+                  var template = bodyTemplate7.setTitle("Thank you for using Pitch Drone.")
+                                      .setImage(makeImage(imgAddress))
+                                      .build();
+                                      
+                  this.response.renderTemplate(template)
+                                      .shouldEndSession(null);
+}
+else {
+  this.response.cardRenderer('Hope you had a good practice!', 'Thank you for using Pitch Drone! \
+  Your reviews help guide us in developing better tools. Please don\'t hesitate to\
+contact us at gentleechodesigns@gmail.com', streamInfo.image);
+}
 
-         const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
-                     
-                      var template = bodyTemplate7.setTitle("Played: ")
-                                          .setImage(makeImage(imgAddress))
-                                          .build();
-                                          
-                      this.response.renderTemplate(template)
-                                          .shouldEndSession(null); 
-    }
-    else {
-      this.response.cardRenderer('Now Playing: ', 'Thank you for using Pitch Drone!', streamInfo.image);
-    }
+
+    //output response including card, speech and audio
+    
+   // this.response.speak(speechOutput).audioPlayerStop();
+    //this.emit(':responseReady');
+    
     
     this.response.speak('Ok').audioPlayerStop();
     this.emit(':responseReady');
