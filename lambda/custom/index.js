@@ -6,7 +6,7 @@ Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
 //Base url to build URLs from
 const SOUNDCLOUD_BASE_URL = 'https://feeds.soundcloud.com/stream/';
-const S3_BASE_URL = 'https://s3.amazonaws.com/ericcricketsnvirginia/';
+const S3_BASE_URL = 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/';
 var audioURL = ''; //sound file
 var imgURL = ''; //image file
 
@@ -373,7 +373,38 @@ var handlers = {
                                               .shouldEndSession(null); 
         }
         else {
-          this.response.cardRenderer('Now Playing' + pitchChar, 'Thank you for using Music Drone!' + txtOutput, streamInfo.image);
+          const imgTestHold = {
+            B: {
+                doubleflat: {
+                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
+                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
+                  xlargeImageURL: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png'
+                },
+                flat:  {
+                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
+                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
+                  xlargeImageURL: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png'
+                },
+                natural:  {
+                  smallImageUrl: S3_BASE_URL + 'B720x480.png',
+                  largeImageUrl: S3_BASE_URL + 'B1024x600.png',
+                  xlargeImageUrl: S3_BASE_URL + 'B1200x800.png'
+                },
+                sharp:  {
+                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
+                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
+                  xlargeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/B1024x600.png'
+                },
+                doublesharp:  {
+                  smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
+                  largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png',
+                  xlargeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/B1024x600.png'
+                }
+            }, 
+          }
+         
+          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Music Drone!', imgTestHold[pitch][multiplier + accidental]);
+          
         }
         this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', audioURL, 1, null, 0);
         console.log();
