@@ -1,0 +1,26 @@
+Thanks for doing this. This skill is a drone app that does a few things differently than the others
+
+
+1) Most importantly, the tones it plays are recorded in a sound studio by a professinal violist. We use natural tones with the overtones of a real instrument, not computer beeps
+2) The tone will play as long as you want.
+
+
+During this first round of testing, the only note that works is B. I am interested right now in:
+1)What you think of the tone. Is it suitable for long practice sessions?
+2What do you think of the graphics? If your Echo device doesn't have a screen, you can see them in the Alexa app.
+3)You can ask specifically for an A440
+
+
+To use the skill you can say
+"Alexa, Open Pitch Drone" - you will be prompted for the note you want
+"Alexa, Ask Pitch Drone to give me a B" - It will play a B and show a graphic on the home screen of the Alex app
+"Alexa, Ask Pitch Drone for a B" - same - plays the tone and shows graphic
+
+
+To stop the tone say
+"Alexa, Stop"
+or 
+"Alexa, Shut Up"
+
+Once Alexa stops another graphic will display on your screen or in the Alexa app.
+

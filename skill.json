@@ -5,17 +5,28 @@
         "en-US": {
           "summary": "A starter template for an Alexa audio streaming skill.",
           "examplePhrases": [
-            "Alexa, open Audio Steam Starter",
-            "Alexa, play Audio Steam Starter",
-            "Alexa, ask Audio Steam Starter to play"
+            "Alexa, open Pitch Drone",
+            "Alexa, ask Pitch Drone for a B.",
+            "Alexa, ask Pitch Drone to give me a B."
           ],
           "keywords": [
-            "audio streaming",
+            "drone",
             "music",
-            "live music"
+            "live music",
+            "natural",
+            "tone",
+            "pitch",
+            "practice",
+            "violin",
+            "viola",
+            "cello",
+            "sing",
+            "practice drone",
+            "music practice",
+            "intonation"
           ],
           "name": "pitch-drone",
-          "description": "Note drone.",
+          "description": "****NOTE: During this first phase of testing the only note that works is B (we do not want to spend time in the studio until we are sure people like this first tone). At this point I am interested in what you think of the tone and what you think of the graphics. If your Echo device does not have a screen you can look at the home page in the Alexa app. \n \n This skill plays the pitch you request in a natural tone. Instead of computer beeps the tone is played on a viola recorded in a studio, so it is easy to listen to has the overtones of a natural instrument. The tone will play until you tell Alexa to stop. \n \n You can request any scale note. In addition to the utterances above, you can say things like: \n \n Alexa, ask Pitch Drone to give me a C double sharp. \n or \n Alexa, ask Pitch Drone for an A440. \n \n When finished, say: \n Alexa, Stop \n or: \n Alexa, shut up",
           "smallIconUri": "https://s3.amazonaws.com/ericcricketsnvirginia/drone/pitchdronelogo108.png",
           "largeIconUri": "https://s3.amazonaws.com/ericcricketsnvirginia/drone/pitchdronelogo512.png"
         }

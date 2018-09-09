@@ -11,7 +11,7 @@ var audioURL = ''; //sound file
 var imgURL = ''; //image file
 
 //Commonly used message text
-const startSpeech = "Welcome to Music Drone. What note would you like? \
+const startSpeech = "Welcome to Pitch Drone. What note would you like? \
    You can say things like C, G natural, or F sharp. You can also say AY 4 40.";
    
 const startReprompt = "What note would you like?";
@@ -166,7 +166,7 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-   //const startSpeech = "Welcome to Music Drone. What note would you like? \
+   //const startSpeech = "Welcome to Pitch Drone. What note would you like? \
    //You can say things like G natural, or F sharp.";
    
    //const startReprompt = "What note would you like?";
@@ -332,8 +332,8 @@ var handlers = {
                                               .shouldEndSession(null); 
         }
         else {
-          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Music Drone!' + txtOutput, objCardImageUrl);
-          //this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Music Drone!' + txtOutput, imgEndUrl[pitch][multiplier + accidental]);
+          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, objCardImageUrl);
+          //this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, imgEndUrl[pitch][multiplier + accidental]);
           
         }
         this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', audioURL, 1, null, 0);
