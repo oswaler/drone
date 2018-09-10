@@ -2,13 +2,13 @@
 
 var Alexa = require('alexa-sdk');
 
+const makeImage = Alexa.utils.ImageUtils.makeImage; //Utility used in rendering the templates
 Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
-//Base url to build URLs from
+//Base urls to build URLs from
 const SOUNDCLOUD_BASE_URL = 'https://feeds.soundcloud.com/stream/';
 const S3_BASE_URL = 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/';
-var audioURL = ''; //sound file
-var imgURL = ''; //image file
+
 
 //Commonly used message text
 const startSpeech = "Welcome to Pitch Drone. What note would you like? \
@@ -16,10 +16,27 @@ const startSpeech = "Welcome to Pitch Drone. What note would you like? \
    
 const startReprompt = "What note would you like?";
 
-var objCardImageUrl = {
-    largeImageUrl: '',
-    smallImageUrl: '',
-};
+// ****** Very important object
+//This object holds all info important to the note requested and its output
+var objNotePackage = {
+    
+    cardPlayImage: { //Holds the 2 images required by ALexa SDK to render card output when audio plays
+      largeImageUrl: '', //1024x800 image. According to SDK docs it must be named exactly like this
+      smallImageUrl: '', //740x480 image. According to SDK docs it must be named exactly like this
+    },
+    templatePlayImage: '', //1200x800 image used in template displayed on play
+    
+    cardSignOffImage: { //Holds the 2 images required by ALexa SDK to render card output when audio stops
+      largeImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1024x600.png', //1024x800 image. According to SDK docs it must be named exactly like this
+      smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png', //740x480 image. According to SDK docs it must be named exactly like this
+    },
+    templateSignOffImage: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1200x800.png', //1200x800 image used in template displayed on play stop
+    
+    audioUrl: '', //sound file to play
+    pitch: '', //The pitch requested by the user read from pitch slot of GetPitchIntent
+    accidental: '', //The accidental (flat, sharp, etc) requested by the user read from pitch slot of GetPitchIntent
+    multiplier: '' //The multiplier (double) requested by the user read from pitch slot of GetPitchIntent
+  };
 
 var streamInfo = {
   title: 'Audio Stream Starter',
@@ -181,7 +198,7 @@ var handlers = {
     // pitch is var rather than const because some cleanup code later translates
     // common Alexa misunderstandings in pitch letters
     const pitchValue = this.event.request.intent.slots.pitch.value;
-    var pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
+    objNotePackage.pitch = (pitchValue || '').trim().toUpperCase().replace(/[^A-Z]/g, '').charAt(0);
     const firstModValue = this.event.request.intent.slots.FirstModifier.value;
     const firstMod = (firstModValue || '').trim().toLowerCase();
     const secondModValue = this.event.request.intent.slots.SecondModifier.value;
@@ -189,44 +206,44 @@ var handlers = {
     
     // if there's a second modifier, the second modifier is the accidental.
     // otherwise, it's the first modifier.
-    let accidental = secondMod ?  secondMod : firstMod;
-    if (!accidental) {
-            accidental = 'natural';
+    objNotePackage.accidental = secondMod ?  secondMod : firstMod;
+    if (!objNotePackage.accidental) {
+      objNotePackage.accidental = 'natural';
     }
     
     // if there's a second modifier, the first modifier is the multiplier.
     // otherwise, the multiplier doesn't exist
-    let multiplier = secondMod ? firstMod : '';
+    objNotePackage.multiplier = secondMod ? firstMod : '';
     
  // this translates things like "shark" to "sharp"
  // or "flight" to "flat"
-        if (/^sh/i.test(accidental)) {
-          accidental = 'sharp';
-      } else if (/^f/i.test(accidental)) {
-          accidental = 'flat';
-      } else if (/^n/i.test(accidental)) {
-          accidental = 'natural';
+        if (/^sh/i.test(objNotePackage.accidental)) {
+          objNotePackage.accidental = 'sharp';
+      } else if (/^f/i.test(objNotePackage.accidental)) {
+        objNotePackage.accidental = 'flat';
+      } else if (/^n/i.test(objNotePackage.accidental)) {
+        objNotePackage.accidental = 'natural';
       }
       
       // this translates "double" soundalikes
-      if (/^d/i.test(multiplier)) {
-          multiplier = 'double';
+      if (/^d/i.test(objNotePackage.multiplier)) {
+        objNotePackage.multiplier = 'double';
       }
 
       //This translates common pitch soundalikes
-      if (pitch == 'S') {
-        pitch = 'C';
+      if (objNotePackage.pitch == 'S') {
+        objNotePackage.pitch = 'C';
       }
-      if (pitch == 'T') {
-        pitch = 'D';
+      if (objNotePackage.pitch == 'T') {
+        objNotePackage.pitch = 'D';
       }
 
     //Check for any invalid input and ask for note again, otherwise construct and send output.
-    const noteRequested = 'You requested ' + pitch + ' ' + multiplier + ' ' + accidental; 
+    const noteRequested = 'You requested ' + objNotePackage.pitch + ' ' + objNotePackage.multiplier + ' ' + objNotePackage.accidental; 
     
     //Validate pitch given was A-G
     const validPitch = ["A", "B", "C", "D", "E", "F", "G"];
-    if (validPitch.indexOf(pitch) === -1) {
+    if (validPitch.indexOf(objNotePackage.pitch) === -1) {
     
     var badPitch = noteRequested + '. The note must be AY, B, C, D, E, F, or G. \
     . You can also say something like Ay flat or C double sharp. What note would you like?';
@@ -235,7 +252,7 @@ var handlers = {
     }
     
     // validate that the user gave a valid accidental
-    else if (['flat', 'natural', 'sharp', '4', '40'].indexOf(accidental) === -1) {
+    else if (['flat', 'natural', 'sharp', '4', '40'].indexOf(objNotePackage.accidental) === -1) {
       
       var badAccidental = noteRequested + '. The accidental must be flat, \
       sharp or natural. What note would you like?.';
@@ -245,98 +262,93 @@ var handlers = {
     
     // validate that the user gave a valid multiplier
    
-    else if (multiplier !== '' && ['double', '4'].indexOf(multiplier) === -1) {
+    else if (objNotePackage.multiplier !== '' && ['double', '4'].indexOf(objNotePackage.multiplier) === -1) {
       var badMultiplierText = noteRequested + '. If you use three words to describe your note, \
       the second word must be double, or you may specifically ask for an Ay 4 40. \
       So you can say something like C double \
       flat, or F double sharp, or Ay 4 40. What note would you like?';
-      const outTest =  pitch + ' ' + multiplier + ' ' + accidental;
+      const outTest =  objNotePackage.pitch + ' ' + objNotePackage.multiplier + ' ' + objNotePackage.accidental;
       this.emit(':ask', badMultiplierText,badMultiplierText);
     }
 
      // validate that the user didn't say "double natural"
-    else if (multiplier === 'double' && accidental === 'natural') {
+     else if (objNotePackage.multiplier === 'double' && objNotePackage.accidental === 'natural') {
      
       var badCombinationText = noteRequested + '. Notes cannot be \
        double natural. ' + 'What note would you like?';
       
       this.emit(':ask', badCombinationText, badCombinationText);
-    }
+     }
 
     //If all checks are passed then play the note and output to card/template
     else {
 
         //Construct spoken output. If pitch is A have Alexa pronounce it as AY
         var pitchSpeech
-        if (pitch == 'A'){
+        if (objNotePackage.pitch == 'A'){
           pitchSpeech = 'AY';
         }
         else {
-          pitchSpeech = pitch;
+          pitchSpeech = objNotePackage.pitch;
         }
         const speechOutput = 
           pitchSpeech 
-          + (multiplier ? ' ' + multiplier : '')
-          + (accidental === 'natural' ? '' : ' ' + accidental);
+          + (objNotePackage.multiplier ? ' ' + objNotePackage.multiplier : '')
+          + (objNotePackage.accidental === 'natural' ? '' : ' ' + objNotePackage.accidental);
         
           
         //Construct sound file URL - Check for special case of A440
-        if (['4', '40'].indexOf(accidental) === -1){
-          audioURL = SOUNDCLOUD_BASE_URL + pitchSoundcloudEndUrl[pitch][multiplier + accidental];
+        if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
+
+          objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
         }
         else {
-          audioURL = SOUNDCLOUD_BASE_URL + '/A440.mp3';
+          objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440.mp3';
         }
 
         //Construct image file URLs - Check for special case of A440
-        if (['4', '40'].indexOf(accidental) === -1){
+        if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
           
-          var imgURLXLarge = S3_BASE_URL + pitch + multiplier + (accidental === 'natural' ? '' : accidental) + '1200x800.png';
-          objCardImageUrl.largeImageUrl = S3_BASE_URL + pitch + multiplier + (accidental === 'natural' ? '' : accidental) + '1024x800.png';
-          objCardImageUrl.smallImageUrl = S3_BASE_URL + pitch + multiplier + (accidental === 'natural' ? '' : accidental) + '720x480.png';
+          objNotePackage.templatePlayImage = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '1200x800.png';
+          objNotePackage.cardPlayImage.largeImageUrl = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '1024x800.png';
+          objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '720x480.png';
           
         }
         else {
-          var imgURLXLarge = S3_BASE_URL + 'A4401200x800.png';
-          objCardImageUrl.largeImageUrl = S3_BASE_URL + 'A4401024x800.png';
-          objCardImageUrl.smallImageUrl = S3_BASE_URL + 'A440720+480.png';
+          objNotePackage.templatePlayImage = S3_BASE_URL + 'A4401200x800.png';
+          objNotePackage.cardPlayImage.largeImageUrl = S3_BASE_URL + 'A4401024x800.png';
+          objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + 'A440720+480.png';
           }
 
         //Construct printed output. Check for special case of A440
         var pitchChar;
-        if (['4', '40'].indexOf(accidental) === -1) {
-          pitchChar = pitch + accidentalToChar[multiplier + accidental];
+        if (['4', '40'].indexOf(objNotePackage.accidental) === -1) {
+          pitchChar = objNotePackage.pitch + accidentalToChar[objNotePackage.multiplier + objNotePackage.accidental];
         }
         else {
           pitchChar = 'A440';
         }
 
-        const txtOutput = pitchChar + ' ' + audioURL + ' Image ';
-        //audioURL = ''; //clear this so it doesn't remain in next pass
-        
+        const txtOutput = pitchChar + ' ' + objNotePackage.audioUrl + ' Image ';
+               
         //Output to card/template and voice
         if (supportsDisplay.call(this))
         {
-          // values used in rendering the body template for Show
-          const makeImage = Alexa.utils.ImageUtils.makeImage;
-          var imgAddress = imgURLXLarge// imgEndUrl[pitch][multiplier + accidental].xlargeImageUrl;
-          //var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/csharpviolin1200x800.PNG";
-
-             const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
+         const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
                          
                           var template = bodyTemplate7.setTitle("Playing " + txtOutput)
-                                              .setImage(makeImage(imgAddress))
+                                              .setImage(makeImage(objNotePackage.templatePlayImage))
                                               .build();
                                               
                           this.response.renderTemplate(template)
                                               .shouldEndSession(null); 
         }
         else {
-          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, objCardImageUrl);
+          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, objNotePackage.cardPlayImage);
           //this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, imgEndUrl[pitch][multiplier + accidental]);
           
         }
-        this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', audioURL, 1, null, 0);
+        this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', objNotePackage.audioUrl, 1, null, 0);
         console.log();
         //this.response.speak(speechOutput);
         this.emit(':responseReady');
@@ -346,16 +358,16 @@ var handlers = {
  
   'PlayStream': function() {
     
-    //if (!audioURL) {
+    //if (!objNotePackage.audioUrl) {
       const againText = 'Sorry, I didn\'t understand your request. ' + startSpeech;  
       this.emit(':ask', againText, startReprompt);
     //}
     /*
     else {
-      this.response.cardRenderer('OK', audioURL);
-      this.response.speak('URL is:' + audioURL);
-      //audioURL = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
-      //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', audioURL, audioURL, null, 0);
+      this.response.cardRenderer('OK', objNotePackage.audioUrl);
+      this.response.speak('URL is:' + objNotePackage.audioUrl);
+      //objNotePackage.audioUrl = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
+      //this.response.speak('Here').audioPlayerPlay('REPLACE_ALL', objNotePackage.audioUrl, objNotePackage.audioUrl, null, 0);
       this.emit(':responseReady');
     }*/
   },
@@ -402,15 +414,11 @@ var handlers = {
   },
   'AMAZON.StopIntent': function() {
     
-    if (supportsDisplay.call(this))
-{
-    // values used in rendering the body template for Show
-     const makeImage = Alexa.utils.ImageUtils.makeImage;
-     var imgAddress = "https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff1200x800.png";
+    if (supportsDisplay.call(this)){
      const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
                   
                   var template = bodyTemplate7.setTitle("Hope you had a good practice!")
-                                      .setImage(makeImage(imgAddress))
+                                      .setImage(makeImage(objNotePackage.templateSignOffImage))
                                       .build();
                                       
                   this.response.renderTemplate(template)
@@ -419,7 +427,7 @@ var handlers = {
 else {
   this.response.cardRenderer('Hope you had a good practice!', 'Thank you for using Pitch Drone! \
   Your reviews help guide us in developing better tools. Please don\'t hesitate to \
-contact us at gentleechodesigns@gmail.com', streamInfo.image);
+contact us at gentleechodesigns@gmail.com', objNotePackage.cardSignOffImage);
 }
 
 
@@ -480,7 +488,7 @@ var audioEventHandlers = {
   },
   'PlaybackNearlyFinished': function() {
     console.log()
-    this.response.audioPlayerPlay('REPLACE_ALL', audioURL, audioURL, null, 0);
+    this.response.audioPlayerPlay('REPLACE_ALL', objNotePackage.audioUrl, objNotePackage.audioUrl, null, 0);
     //this.response.audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
     this.emit(':responseReady');
   },
