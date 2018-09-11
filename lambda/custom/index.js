@@ -5,6 +5,8 @@ var Alexa = require('alexa-sdk');
 const makeImage = Alexa.utils.ImageUtils.makeImage; //Utility used in rendering the templates
 Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
+var playStatus = '';
+
 //Base urls to build URLs from
 const SOUNDCLOUD_BASE_URL = 'https://feeds.soundcloud.com/stream/';
 const S3_BASE_URL = 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/';
@@ -100,7 +102,7 @@ var streamInfo = {
   },
   B: {
       doubleflat: '/A.mp3',
-      flat: '496686249-user-973941472-bflat.mp3',
+      flat: '',//'496686249-user-973941472-bflat.mp3',
       natural: '496686048-user-973941472-b-1.mp3',
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
@@ -330,7 +332,10 @@ var handlers = {
         }
 
         const txtOutput = pitchChar + ' ' + objNotePackage.audioUrl + ' Image ';
-               
+             
+        //var checkDisplay = supportsDisplay.call(this);
+        makeTemplate.call(this, 'play', pitchChar);
+        /*
         //Output to card/template and voice
         if (supportsDisplay.call(this))
         {
@@ -348,6 +353,7 @@ var handlers = {
           //this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, imgEndUrl[pitch][multiplier + accidental]);
           
         }
+        */
         this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', objNotePackage.audioUrl, 1, null, 0);
         console.log();
         //this.response.speak(speechOutput);
@@ -414,6 +420,8 @@ var handlers = {
   },
   'AMAZON.StopIntent': function() {
     
+    makeTemplate.call(this, 'stop');
+/*    
     if (supportsDisplay.call(this)){
      const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
                   
@@ -429,17 +437,19 @@ else {
   Your reviews help guide us in developing better tools. Please don\'t hesitate to \
 contact us at gentleechodesigns@gmail.com', objNotePackage.cardSignOffImage);
 }
-
+*/
 
     //output response including card, speech and audio
     
    // this.response.speak(speechOutput).audioPlayerStop();
     //this.emit(':responseReady');
     
-    
+ 
     this.response.speak('Ok').audioPlayerStop();
     this.emit(':responseReady');
+
   },
+
   'AMAZON.ResumeIntent': function() {
     this.emit('PlayStream');
   },
@@ -489,7 +499,6 @@ var audioEventHandlers = {
   'PlaybackNearlyFinished': function() {
     console.log()
     this.response.audioPlayerPlay('REPLACE_ALL', objNotePackage.audioUrl, objNotePackage.audioUrl, null, 0);
-    //this.response.audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
     this.emit(':responseReady');
   },
   'PlaybackFailed': function() {
@@ -508,22 +517,45 @@ function supportsDisplay() {
   return hasDisplay;
 }
 
-function makeTemplate(tempPitchChar, tempPitch, tempMultiplier, tempAccidental){
+//This function handles the visual output. It checks whether the user device has a screen
+//and renders a template if it does. If not it outputs to a card in the Alexa app.
+//Parameters:  playStatus should be either 'play' or 'stop'
+//             pitchCharacter should be the the pitchChar variable from the handler. It is 
+//             the screen-friendly version of the note requested.
+//Be sure to include keyword this as the first parameter to bind the scope.
+//example of use: makeTemplate.call(this, 'play', pitchChar);
+function makeTemplate(playStatus, pitchCharacter){
+  
+  if (playStatus == 'play'){
+    var tempTitle = 'Play Well!';
+    var tempShowImage = objNotePackage.templatePlayImage;
+    var cardShowImage = objNotePackage.cardPlayImage;
+    var cardShowTitle = 'Now Playing: ' + pitchCharacter;
+    var cardShowContent = 'With focus and consistency you\'ll always see great improvement';
+  }
+  else {
+    var tempTitle = 'Hope You Had a Good Practice!';
+    var tempShowImage = objNotePackage.templateSignOffImage;
+    var cardShowImage = objNotePackage.cardSignOffImage;
+    var cardShowTitle = 'Hope You Had a Good Practice!';
+    var cardShowContent = 'Thank you for using Pitch Drone! \
+    Your reviews help guide us in developing better tools. Please don\'t hesitate to \
+  contact us at gentleechodesigns@gmail.com';
+  }
 
   if (supportsDisplay.call(this))
   {
     
        const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
-                    var tempTitle = 'Now Playing ' + tempPitchChar;
                     var template = bodyTemplate7.setTitle(tempTitle)
-                                        .setImage(makeImage(streamInfo.image))
+                                        .setImage(makeImage(tempShowImage))
                                         .build();
                                         
                     this.response.renderTemplate(template)
                                         .shouldEndSession(null);
   }
   else {
-    this.response.cardRenderer(tempTitle, tempPitchChar, streamInfo.image);
+    this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
   }
 return;
 }
