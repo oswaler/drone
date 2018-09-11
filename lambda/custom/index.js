@@ -5,16 +5,17 @@ var Alexa = require('alexa-sdk');
 const makeImage = Alexa.utils.ImageUtils.makeImage; //Utility used in rendering the templates
 Alexa.APP_ID = 'amzn1.ask.skill.092aa3ec-992f-446a-8c5f-9996a5075459';
 
+//used to tell makeTemplate() whether to show 'play' or 'stop' graphics
 var playStatus = '';
 
-//Base urls to build URLs from
+//Base urls used to build URLs
 const SOUNDCLOUD_BASE_URL = 'https://feeds.soundcloud.com/stream/';
 const S3_BASE_URL = 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/';
 
 
 //Commonly used message text
 const startSpeech = "Welcome to Pitch Drone. What note would you like? \
-   You can say things like C, G natural, or F sharp. You can also say AY 4 40.";
+   You can say things like C, G sharp, or B double flat. You can also say AY 4 40.";
    
 const startReprompt = "What note would you like?";
 
@@ -37,7 +38,8 @@ var objNotePackage = {
     audioUrl: '', //sound file to play
     pitch: '', //The pitch requested by the user read from pitch slot of GetPitchIntent
     accidental: '', //The accidental (flat, sharp, etc) requested by the user read from pitch slot of GetPitchIntent
-    multiplier: '' //The multiplier (double) requested by the user read from pitch slot of GetPitchIntent
+    multiplier: '', //The multiplier (double) requested by the user read from pitch slot of GetPitchIntent
+    pitchChar: '' // Holds the constructed screen-friendly version of the note the user requested.
   };
 
 var streamInfo = {
@@ -185,10 +187,7 @@ exports.handler = (event, context, callback) => {
 
 var handlers = {
   'LaunchRequest': function() {
-   //const startSpeech = "Welcome to Pitch Drone. What note would you like? \
-   //You can say things like G natural, or F sharp.";
    
-   //const startReprompt = "What note would you like?";
    this.emit(':ask', startSpeech, startReprompt);
     
     //this.emit(':responseReady');
@@ -307,56 +306,12 @@ var handlers = {
         else {
           objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440.mp3';
         }
-
-        //Construct image file URLs - Check for special case of A440
-        if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
-          
-          objNotePackage.templatePlayImage = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '1200x800.png';
-          objNotePackage.cardPlayImage.largeImageUrl = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '1024x800.png';
-          objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '720x480.png';
-          
-        }
-        else {
-          objNotePackage.templatePlayImage = S3_BASE_URL + 'A4401200x800.png';
-          objNotePackage.cardPlayImage.largeImageUrl = S3_BASE_URL + 'A4401024x800.png';
-          objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + 'A440720+480.png';
-          }
-
-        //Construct printed output. Check for special case of A440
-        var pitchChar;
-        if (['4', '40'].indexOf(objNotePackage.accidental) === -1) {
-          pitchChar = objNotePackage.pitch + accidentalToChar[objNotePackage.multiplier + objNotePackage.accidental];
-        }
-        else {
-          pitchChar = 'A440';
-        }
-
-        const txtOutput = pitchChar + ' ' + objNotePackage.audioUrl + ' Image ';
-             
-        //var checkDisplay = supportsDisplay.call(this);
-        makeTemplate.call(this, 'play', pitchChar);
-        /*
-        //Output to card/template and voice
-        if (supportsDisplay.call(this))
-        {
-         const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
-                         
-                          var template = bodyTemplate7.setTitle("Playing " + txtOutput)
-                                              .setImage(makeImage(objNotePackage.templatePlayImage))
-                                              .build();
-                                              
-                          this.response.renderTemplate(template)
-                                              .shouldEndSession(null); 
-        }
-        else {
-          this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, objNotePackage.cardPlayImage);
-          //this.response.cardRenderer('Now Playing: ' + pitchChar, 'Thank you for using Pitch Drone!' + txtOutput, imgEndUrl[pitch][multiplier + accidental]);
-          
-        }
-        */
+         
+       //Output to available screen
+        makeTemplate.call(this, 'play');
+       
         this.response.speak(speechOutput).audioPlayerPlay('REPLACE_ALL', objNotePackage.audioUrl, 1, null, 0);
         console.log();
-        //this.response.speak(speechOutput);
         this.emit(':responseReady');
     }
   },
@@ -420,30 +375,8 @@ var handlers = {
   },
   'AMAZON.StopIntent': function() {
     
+    //output to available screen
     makeTemplate.call(this, 'stop');
-/*    
-    if (supportsDisplay.call(this)){
-     const bodyTemplate7 = new Alexa.templateBuilders.BodyTemplate7Builder();
-                  
-                  var template = bodyTemplate7.setTitle("Hope you had a good practice!")
-                                      .setImage(makeImage(objNotePackage.templateSignOffImage))
-                                      .build();
-                                      
-                  this.response.renderTemplate(template)
-                                      .shouldEndSession(null);
-}
-else {
-  this.response.cardRenderer('Hope you had a good practice!', 'Thank you for using Pitch Drone! \
-  Your reviews help guide us in developing better tools. Please don\'t hesitate to \
-contact us at gentleechodesigns@gmail.com', objNotePackage.cardSignOffImage);
-}
-*/
-
-    //output response including card, speech and audio
-    
-   // this.response.speak(speechOutput).audioPlayerStop();
-    //this.emit(':responseReady');
-    
  
     this.response.speak('Ok').audioPlayerStop();
     this.emit(':responseReady');
@@ -517,6 +450,8 @@ function supportsDisplay() {
   return hasDisplay;
 }
 
+
+
 //This function handles the visual output. It checks whether the user device has a screen
 //and renders a template if it does. If not it outputs to a card in the Alexa app.
 //Parameters:  playStatus should be either 'play' or 'stop'
@@ -524,13 +459,36 @@ function supportsDisplay() {
 //             the screen-friendly version of the note requested.
 //Be sure to include keyword this as the first parameter to bind the scope.
 //example of use: makeTemplate.call(this, 'play', pitchChar);
-function makeTemplate(playStatus, pitchCharacter){
+function makeTemplate(playStatus){
   
   if (playStatus == 'play'){
+    //Construct image file URLs - Check for special case of A440
+    //This is redundant and inefficient, since I'm constructing the URLs, putting them in
+    //the objNotePackage object, then immediately reading them into another variable.
+    //With this template function I can remove these properties from objNotePackage
+    //but I like having them in one centralized place
+    if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
+          
+      objNotePackage.templatePlayImage = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '1200x800.png';
+      objNotePackage.cardPlayImage.largeImageUrl = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '1024x800.png';
+      objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + objNotePackage.pitch + objNotePackage.multiplier + (objNotePackage.accidental === 'natural' ? '' : objNotePackage.accidental) + '720x480.png';
+      
+      //Construct screen-friendly version of note requested 
+      objNotePackage.pitchChar = objNotePackage.pitch + accidentalToChar[objNotePackage.multiplier + objNotePackage.accidental];
+    }
+    else {
+      objNotePackage.templatePlayImage = S3_BASE_URL + 'A4401200x800.png';
+      objNotePackage.cardPlayImage.largeImageUrl = S3_BASE_URL + 'A4401024x800.png';
+      objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + 'A440720+480.png';
+       
+      //Construct screen-friendly version of note requested 
+      objNotePackage.pitchChar = 'A440';
+    }
+
     var tempTitle = 'Play Well!';
     var tempShowImage = objNotePackage.templatePlayImage;
     var cardShowImage = objNotePackage.cardPlayImage;
-    var cardShowTitle = 'Now Playing: ' + pitchCharacter;
+    var cardShowTitle = 'Now Playing: ' + objNotePackage.pitchChar;
     var cardShowContent = 'With focus and consistency you\'ll always see great improvement';
   }
   else {
