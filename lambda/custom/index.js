@@ -479,17 +479,17 @@ function makeTemplate(playStatus){
     else {
       objNotePackage.templatePlayImage = S3_BASE_URL + 'A4401200x800.png';
       objNotePackage.cardPlayImage.largeImageUrl = S3_BASE_URL + 'A4401024x800.png';
-      objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + 'A440720+480.png';
+      objNotePackage.cardPlayImage.smallImageUrl = S3_BASE_URL + 'A440720x480.png';
        
       //Construct screen-friendly version of note requested 
       objNotePackage.pitchChar = 'A440';
     }
 
-    var tempTitle = 'Play Well!';
+    var tempTitle = 'Play Well! ';
     var tempShowImage = objNotePackage.templatePlayImage;
     var cardShowImage = objNotePackage.cardPlayImage;
     var cardShowTitle = 'Now Playing: ' + objNotePackage.pitchChar;
-    var cardShowContent = 'With focus and consistency you\'ll always see great improvement';
+    var cardShowContent = 'With focus and consistency you\'ll always see great improvement.';
   }
   else {
     var tempTitle = 'Hope You Had a Good Practice!';
