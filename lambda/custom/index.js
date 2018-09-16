@@ -453,12 +453,11 @@ function supportsDisplay() {
 
 
 //This function handles the visual output. It checks whether the user device has a screen
-//and renders a template if it does. If not it outputs to a card in the Alexa app.
-//Parameters:  playStatus should be either 'play' or 'stop'
-//             pitchCharacter should be the the pitchChar variable from the handler. It is 
-//             the screen-friendly version of the note requested.
+//    and renders a template if it does as well as rendering a card in the Alexa app.
+//    If not it only outputs to a card in the Alexa app.
+//Parameters:  playStatus should be either 'play' or 'stop'          
 //Be sure to include keyword this as the first parameter to bind the scope.
-//example of use: makeTemplate.call(this, 'play', pitchChar);
+//example of use: makeTemplate.call(this, 'play');
 function makeTemplate(playStatus){
   
   if (playStatus == 'play'){
@@ -488,7 +487,7 @@ function makeTemplate(playStatus){
     var tempTitle = 'Play Well! ';
     var tempShowImage = objNotePackage.templatePlayImage;
     var cardShowImage = objNotePackage.cardPlayImage;
-    var cardShowTitle = 'Now Playing: ' + objNotePackage.pitchChar;
+    var cardShowTitle = 'Practice Tip';//Now Playing: ' + objNotePackage.pitchChar;
     var cardShowContent = getPracticeTip();
   }
   else {
@@ -500,7 +499,8 @@ function makeTemplate(playStatus){
     Your reviews help guide us in developing better tools. Please don\'t hesitate to \
   contact us at gentleechodesigns@gmail.com';
   }
-
+  
+  //Check to see if device has a screen. If so, show template on screen.
   if (supportsDisplay.call(this))
   {
     
@@ -511,11 +511,10 @@ function makeTemplate(playStatus){
                                         
                     this.response.renderTemplate(template)
                                         .shouldEndSession(null);
-       this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
+  
   }
-  else {
-    this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
-  }
+//Always outputs to Alexa app  
+this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
 return;
 }
 
