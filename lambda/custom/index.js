@@ -489,7 +489,7 @@ function makeTemplate(playStatus){
     var tempShowImage = objNotePackage.templatePlayImage;
     var cardShowImage = objNotePackage.cardPlayImage;
     var cardShowTitle = 'Now Playing: ' + objNotePackage.pitchChar;
-    var cardShowContent = 'With focus and consistency you\'ll always see great improvement.';
+    var cardShowContent = getPracticeTip();
   }
   else {
     var tempTitle = 'Hope You Had a Good Practice!';
@@ -516,4 +516,24 @@ function makeTemplate(playStatus){
     this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
   }
 return;
+}
+
+//This function chooses a practice tip at random and returns the tip as a string.
+function getPracticeTip(){
+
+
+   const practiceTip = [
+  'With focus and consistency you\'ll always see great improvement.',
+  'Keep a daily practice log. That way you\'ll always know what you\'ve worked on and where you are with it.',
+  'Never start a practice by wondering what you should work on today. Use your practice log to determine what you did last time and where you need to begin.',
+  'To get better you need effortful, consistent practice. If you work hard but only practice once in a while, you will not progress. If you practice every day but don\'t push yourself, you won\'t progress.', 
+  'Use timers when you practice. For instance, when you practice a scale, set a timer for 10 minutes. When the timer ends then stop. This forces you to focus on one aspect of what you are doing. Open ended practice often leads to lack of focus and results in a lot of time spent with no specific result.',
+  'Break up your repertoire practice into timed parts. For instance, if you are working on 3 pieces, spend 10 minutes on each for a total of 30 minutes. Take a break and do the same thing again. Take a break and do it again. You still get an hour and a half of practice but there is a big mental benefit to working on them in interleaved chunks.',
+  'Never do exactly the same practice two days in a row. Use your practice log to record each thing you practiced along with tempo and notes on intonation, tone, etc. In every practice refer to your practice log and make sure you strive to get some aspect of each thing you practice a little better than last time.'
+];
+
+var practiceTipIndex = Math.floor(Math.random() * practiceTip.length);
+var randomTip = practiceTip[practiceTipIndex];
+
+return randomTip;
 }
