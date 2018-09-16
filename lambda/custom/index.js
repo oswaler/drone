@@ -378,7 +378,7 @@ var handlers = {
     //output to available screen
     makeTemplate.call(this, 'stop');
  
-    this.response.speak('Ok').audioPlayerStop();
+    this.response.speak('Ok. I sent a practice tip to your Alexa app.').audioPlayerStop();
     this.emit(':responseReady');
 
   },
@@ -511,6 +511,7 @@ function makeTemplate(playStatus){
                                         
                     this.response.renderTemplate(template)
                                         .shouldEndSession(null);
+       this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
   }
   else {
     this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
