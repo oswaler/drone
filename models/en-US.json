@@ -55,35 +55,35 @@
                 {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
-                },   
+                },
                 {
                     "name": "AMAZON.ScrollUpIntent",
                     "samples": []
-                }, 
+                },
                 {
                     "name": "AMAZON.NextIntent",
                     "samples": []
-                }, 
+                },
                 {
                     "name": "AMAZON.ScrollLeftIntent",
                     "samples": []
-                }, 
+                },
                 {
                     "name": "AMAZON.MoreIntent",
                     "samples": []
-                }, 
+                },
                 {
                     "name": "AMAZON.PageDownIntent",
                     "samples": []
-                }, 
+                },
                 {
                     "name": "AMAZON.ScrollRightIntent",
                     "samples": []
-                },  
+                },
                 {
                     "name": "AMAZON.PageUpIntent",
                     "samples": []
-                },   
+                },
                 {
                     "name": "GetPitchIntent",
                     "slots": [
@@ -98,6 +98,14 @@
                         {
                             "name": "SecondModifier",
                             "type": "List_Of_Modifiers"
+                        },
+                        {
+                            "name": "With",
+                            "type": "List_of_With"
+                        },
+                        {
+                            "name": "Vibrato",
+                            "type": "List_of_Vibrato"
                         }
                     ],
                     "samples": [
@@ -131,7 +139,38 @@
                         "Sing me a {pitch} {FirstModifier}",
                         "Sing me an {pitch} {FirstModifier}",
                         "a {pitch} {FirstModifier}",
-                        "an {pitch} {FirstModifier}"
+                        "an {pitch} {FirstModifier}",
+                        "Give me a {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "Give me an {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "Play me a {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "Play me an {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "Play a {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "Play an {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "Sing me a {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "Sing me an {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "{pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "a {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "an {pitch} {FirstModifier} {SecondModifier} {With} {Vibrato}",
+                        "a {pitch} {With} {Vibrato}",
+                        "an {pitch} {With} {Vibrato}",
+                        "Give me a {pitch} {With} {Vibrato}",
+                        "Give me an {pitch} {With} {Vibrato}",
+                        "Play me a {pitch} {With} {Vibrato}",
+                        "Play me an {pitch} {With} {Vibrato}",
+                        "Play a {pitch} {With} {Vibrato}",
+                        "Play an {pitch} {With} {Vibrato}",
+                        "Sing me a {pitch} {With} {Vibrato}",
+                        "Sing me an {pitch} {With} {Vibrato}",
+                        "Give me a {pitch} {FirstModifier} {With} {Vibrato}",
+                        "Give me an {pitch} {FirstModifier} {With} {Vibrato}",
+                        "Play me a {pitch} {FirstModifier} {With} {Vibrato}",
+                        "Play me an {pitch} {FirstModifier} {With} {Vibrato}",
+                        "Play a {pitch} {FirstModifier} {With} {Vibrato}",
+                        "Play an {pitch} {FirstModifier} {With} {Vibrato}",
+                        "Sing me a {pitch} {FirstModifier} {With} {Vibrato}",
+                        "Sing me an {pitch} {FirstModifier} {With} {Vibrato}",
+                        "a {pitch} {FirstModifier} {With} {Vibrato}",
+                        "an {pitch} {FirstModifier} {With} {Vibrato}"
                     ]
                 }
             ],
@@ -163,7 +202,8 @@
                             "name": {
                                 "value": "V."
                             }
-                        },{
+                        },
+                        {
                             "name": {
                                 "value": "U."
                             }
@@ -202,7 +242,8 @@
                             "name": {
                                 "value": "N."
                             }
-                        },{
+                        },
+                        {
                             "name": {
                                 "value": "M."
                             }
@@ -301,7 +342,8 @@
                             "name": {
                                 "value": "40"
                             }
-                        }, {
+                        },
+                        {
                             "name": {
                                 "value": "forty"
                             }
@@ -309,6 +351,31 @@
                         {
                             "name": {
                                 "value": "sharp"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "List_of_With",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "with"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "List_of_Vibrato",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "vibration"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "vibrato"
                             }
                         }
                     ]
