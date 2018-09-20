@@ -39,7 +39,9 @@ var objNotePackage = {
     pitch: '', //The pitch requested by the user read from pitch slot of GetPitchIntent
     accidental: '', //The accidental (flat, sharp, etc) requested by the user read from pitch slot of GetPitchIntent
     multiplier: '', //The multiplier (double) requested by the user read from pitch slot of GetPitchIntent
-    pitchChar: '' // Holds the constructed screen-friendly version of the note the user requested.
+    pitchChar: '', // Holds the constructed screen-friendly version of the note the user requested.
+    addWith: '', //The addition (with) requested by the user read from With slot of GetPitchIntent
+    Vibrato: '' // The vibrato requested by the user read from Vibrato slot of GetPitchIntent.  
   };
 
 var streamInfo = {
@@ -204,6 +206,10 @@ var handlers = {
     const firstMod = (firstModValue || '').trim().toLowerCase();
     const secondModValue = this.event.request.intent.slots.SecondModifier.value;
     const secondMod = (secondModValue || '').trim().toLowerCase();
+    const withValue = this.event.request.intent.slots.With.value;
+    const addWith = (withValue || '').trim().toLowerCase();
+    const vibratoValue = this.event.request.intent.slots.Vibrato.value;
+    const Vibrato = (vibratoValue || '').trim().toLowerCase();
     
     // if there's a second modifier, the second modifier is the accidental.
     // otherwise, it's the first modifier.
@@ -229,6 +235,22 @@ var handlers = {
       // this translates "double" soundalikes
       if (/^d/i.test(objNotePackage.multiplier)) {
         objNotePackage.multiplier = 'double';
+      }
+
+      // this translates "with" soundalikes
+      if (/^w/i.test(addWith)) {
+        objNotePackage.addWith = 'with';
+      }
+      else {
+        objNotePackage.addWith = '';
+      }
+
+      // this translates "vibrato" soundalikes
+      if (/^v/i.test(Vibrato)) {
+        objNotePackage.Vibrato = 'vibrato';
+      }
+      else {
+        objNotePackage.Vibrato = '';
       }
 
       //This translates common pitch soundalikes
@@ -295,7 +317,8 @@ var handlers = {
         const speechOutput = 
           pitchSpeech 
           + (objNotePackage.multiplier ? ' ' + objNotePackage.multiplier : '')
-          + (objNotePackage.accidental === 'natural' ? '' : ' ' + objNotePackage.accidental);
+          + (objNotePackage.accidental === 'natural' ? '' : ' ' + objNotePackage.accidental)
+          + ', ' + objNotePackage.addWith + ' ' + objNotePackage.Vibrato;
         
           
         //Construct sound file URL - Check for special case of A440
