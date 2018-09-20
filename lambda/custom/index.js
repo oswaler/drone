@@ -159,7 +159,7 @@ var streamInfo = {
   B: {
       doubleflat: '/A.mp3',
       flat: '/Bflat.mp3',
-      natural: '496165830-user-973941472-b-loop-mixdown.mp3',
+      natural: 'B.mp3',
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
   }
@@ -439,6 +439,9 @@ var audioEventHandlers = {
     this.emit(':responseReady');
   }
 }
+
+//This is an Amazon-provided function that checks whether the requesting device
+//   has a display. Returns True if it does and False if it doesn't
 function supportsDisplay() {
   var hasDisplay =
   this.event.context &&
@@ -458,6 +461,7 @@ function supportsDisplay() {
 //Parameters:  playStatus should be either 'play' or 'stop'          
 //Be sure to include keyword this as the first parameter to bind the scope.
 //example of use: makeTemplate.call(this, 'play');
+
 function makeTemplate(playStatus){
   
   if (playStatus == 'play'){
