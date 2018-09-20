@@ -55,7 +55,7 @@ var streamInfo = {
   }
 };
 
-
+/*
  //Patterns to construct sound file URL
  //Use enharmonics to reduce number of files needed
  
@@ -165,7 +165,7 @@ var streamInfo = {
       sharp: '/C.mp3',
       doublesharp: '/Csharp.mp3'
   }
-};
+ }; */
 
 //Used for translating accidental text to appropriate character
 const accidentalToChar = {
@@ -322,14 +322,16 @@ var handlers = {
         
           
         //Construct sound file URL - Check for special case of A440
-        if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
+        CreateSoundFileURL();
+        /*if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
 
           objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
         }
         else {
           objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440.mp3';
         }
-         
+         */
+
        //Output to available screen
         makeTemplate.call(this, 'play');
        
@@ -563,4 +565,213 @@ var practiceTipIndex = Math.floor(Math.random() * practiceTip.length);
 var randomTip = practiceTip[practiceTipIndex];
 
 return randomTip;
+}
+
+//This function constructs the sound file URL based on 2 things:
+//  1)The note requested
+//  2)whether vibrato was requested
+//The URL is placed in objNotePackage.audioUrl
+//No data is passed back on return
+function CreateSoundFileURL(){
+
+  //******************************
+  //START DEFINE SOUNDS FILE URLS FOR S3 AND SOUNDCLOUD
+  //******************************
+
+//Patterns to construct sound file URL
+ //Use enharmonics to reduce number of files needed
+ 
+ //Contains URLs for NO VIBRATO sound files stored on SoundCloud
+ const pitchSoundcloudNoVibratoEndUrl = {
+  C: {
+      doubleflat: '/Bflat.mp3',
+      flat: '/B.mp3',
+      natural: '/C.mp3',
+      sharp: '/Csharp.mp3',
+      doublesharp: '/D.mp3'
+  },
+    
+  D: {
+      doubleflat: '/C.mp3',
+      flat: '/Csharp.mp3',
+      natural: '/D.mp3',
+      sharp: '/Eflat.mp3',
+      doublesharp: '/E.mp3'
+  },
+  E: {
+      doubleflat: '/D.mp3',
+      flat: '/Eflat.mp3',
+      natural: '/E.mp3',
+      sharp: '/F.mp3',
+      doublesharp: '/Fsharp.mp3'
+  },
+  F: {
+      doubleflat: '/Eflat.mp3',
+      flat: '/E.mp3',
+      natural: '/F.mp3',
+      sharp: '/Fsharp.mp3',
+      doublesharp: '/G.mp3'
+  },
+  G: {
+      doubleflat: '/F.mp3',
+      flat: '/Fsharp.mp3',
+      natural: '/G.mp3',
+      sharp: '/Aflat.mp3',
+      doublesharp: '/A.mp3'
+  },
+  A: {
+      doubleflat: '/G.mp3',
+      flat: '/Aflat.mp3',
+      natural: '/A.mp3',
+      sharp: '/Bflat.mp3',
+      doublesharp: '/B.mp3'
+  },
+  B: {
+      doubleflat: '/A.mp3',
+      flat: '',//'496686249-user-973941472-bflat.mp3',
+      natural: '502813077-user-973941472-boctave.mp3',
+      sharp: '/C.mp3',
+      doublesharp: '/Csharp.mp3'
+  }
+};
+
+//Contains URLs for sound files WITH VIBRATO stored on SoundCloud
+const pitchSoundcloudVibratoEndUrl = {
+  C: {
+      doubleflat: '/Bflat.mp3',
+      flat: '/B.mp3',
+      natural: '/C.mp3',
+      sharp: '/Csharp.mp3',
+      doublesharp: '/D.mp3'
+  },
+    
+  D: {
+      doubleflat: '/C.mp3',
+      flat: '/Csharp.mp3',
+      natural: '/D.mp3',
+      sharp: '/Eflat.mp3',
+      doublesharp: '/E.mp3'
+  },
+  E: {
+      doubleflat: '/D.mp3',
+      flat: '/Eflat.mp3',
+      natural: '/E.mp3',
+      sharp: '/F.mp3',
+      doublesharp: '/Fsharp.mp3'
+  },
+  F: {
+      doubleflat: '/Eflat.mp3',
+      flat: '/E.mp3',
+      natural: '/F.mp3',
+      sharp: '/Fsharp.mp3',
+      doublesharp: '/G.mp3'
+  },
+  G: {
+      doubleflat: '/F.mp3',
+      flat: '/Fsharp.mp3',
+      natural: '/G.mp3',
+      sharp: '/Aflat.mp3',
+      doublesharp: '/A.mp3'
+  },
+  A: {
+      doubleflat: '/G.mp3',
+      flat: '/Aflat.mp3',
+      natural: '/A.mp3',
+      sharp: '/Bflat.mp3',
+      doublesharp: '/B.mp3'
+  },
+  B: {
+      doubleflat: '/A.mp3',
+      flat: '',//'496686249-user-973941472-bflat.mp3',
+      natural: '496686048-user-973941472-b-1.mp3',
+      sharp: '/C.mp3',
+      doublesharp: '/Csharp.mp3'
+  }
+};
+
+//Contains sound file URLs for files stored on Amazon S3
+ const pitchS3EndUrl = {
+  C: {
+      doubleflat: '/Bflat.mp3',
+      flat: '/B.mp3',
+      natural: '/C.mp3',
+      sharp: '/Csharp.mp3',
+      doublesharp: '/D.mp3'
+  },
+    
+  D: {
+      doubleflat: '/C.mp3',
+      flat: '/Csharp.mp3',
+      natural: '/D.mp3',
+      sharp: '/Eflat.mp3',
+      doublesharp: '/E.mp3'
+  },
+  E: {
+      doubleflat: '/D.mp3',
+      flat: '/Eflat.mp3',
+      natural: '/E.mp3',
+      sharp: '/F.mp3',
+      doublesharp: '/Fsharp.mp3'
+  },
+  F: {
+      doubleflat: '/Eflat.mp3',
+      flat: '/E.mp3',
+      natural: '/F.mp3',
+      sharp: '/Fsharp.mp3',
+      doublesharp: '/G.mp3'
+  },
+  G: {
+      doubleflat: '/F.mp3',
+      flat: '/Fsharp.mp3',
+      natural: '/G.mp3',
+      sharp: '/Aflat.mp3',
+      doublesharp: '/A.mp3'
+  },
+  A: {
+      doubleflat: '/G.mp3',
+      flat: '/Aflat.mp3',
+      natural: '/A.mp3',
+      sharp: '/Bflat.mp3',
+      doublesharp: '/B.mp3'
+  },
+  B: {
+      doubleflat: '/A.mp3',
+      flat: '/Bflat.mp3',
+      natural: 'B.mp3',
+      sharp: '/C.mp3',
+      doublesharp: '/Csharp.mp3'
+  }
+};
+  //******************************
+  //END DEFINE SOUNDS FILE URLS FOR S3 AND SOUNDCLOUD
+  //******************************
+
+
+  //Construct audio file URL.
+  //If vibrato requested get URL from VIBRATO list
+  //else take URL from NO VIBRATO list
+  if (objNotePackage.Vibrato=='vibrato') {
+    //Check for A440 special case
+    if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
+
+      objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudVibratoEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
+  }
+    else {
+      objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440v.mp3';
+  }
+
+  }
+  else {
+    //Check for A440 special case
+    if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
+
+      objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudNoVibratoEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
+    }
+    else {
+      objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440.mp3';
+    }
+  }
+  
+
+  return; //No data is returned
 }
