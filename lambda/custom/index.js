@@ -39,9 +39,9 @@ var objNotePackage = {
     pitch: '', //The pitch requested by the user read from pitch slot of GetPitchIntent
     accidental: '', //The accidental (flat, sharp, etc) requested by the user read from pitch slot of GetPitchIntent
     multiplier: '', //The multiplier (double) requested by the user read from pitch slot of GetPitchIntent
-    pitchChar: '', // Holds the constructed screen-friendly version of the note the user requested.
+    pitchChar: '', //Holds the constructed screen-friendly version of the note the user requested.
     addWith: '', //The addition (with) requested by the user read from With slot of GetPitchIntent
-    Vibrato: '' // The vibrato requested by the user read from Vibrato slot of GetPitchIntent.  
+    Vibrato: '' //The vibrato requested by the user read from Vibrato slot of GetPitchIntent.  
   };
 
 var streamInfo = {
@@ -54,118 +54,6 @@ var streamInfo = {
     smallImageUrl: 'https://s3.amazonaws.com/ericcricketsnvirginia/drone/signoff720x480.png',
   }
 };
-
-/*
- //Patterns to construct sound file URL
- //Use enharmonics to reduce number of files needed
- 
- //Contains URLs for sound files stored on SoundCloud
- const pitchSoundcloudEndUrl = {
-  C: {
-      doubleflat: '/Bflat.mp3',
-      flat: '/B.mp3',
-      natural: '/C.mp3',
-      sharp: '/Csharp.mp3',
-      doublesharp: '/D.mp3'
-  },
-    
-  D: {
-      doubleflat: '/C.mp3',
-      flat: '/Csharp.mp3',
-      natural: '/D.mp3',
-      sharp: '/Eflat.mp3',
-      doublesharp: '/E.mp3'
-  },
-  E: {
-      doubleflat: '/D.mp3',
-      flat: '/Eflat.mp3',
-      natural: '/E.mp3',
-      sharp: '/F.mp3',
-      doublesharp: '/Fsharp.mp3'
-  },
-  F: {
-      doubleflat: '/Eflat.mp3',
-      flat: '/E.mp3',
-      natural: '/F.mp3',
-      sharp: '/Fsharp.mp3',
-      doublesharp: '/G.mp3'
-  },
-  G: {
-      doubleflat: '/F.mp3',
-      flat: '/Fsharp.mp3',
-      natural: '/G.mp3',
-      sharp: '/Aflat.mp3',
-      doublesharp: '/A.mp3'
-  },
-  A: {
-      doubleflat: '/G.mp3',
-      flat: '/Aflat.mp3',
-      natural: '/A.mp3',
-      sharp: '/Bflat.mp3',
-      doublesharp: '/B.mp3'
-  },
-  B: {
-      doubleflat: '/A.mp3',
-      flat: '',//'496686249-user-973941472-bflat.mp3',
-      natural: '496686048-user-973941472-b-1.mp3',
-      sharp: '/C.mp3',
-      doublesharp: '/Csharp.mp3'
-  }
-};
-
-//Contains sound file URLs for files stored on Amazon S3
- const pitchS3EndUrl = {
-  C: {
-      doubleflat: '/Bflat.mp3',
-      flat: '/B.mp3',
-      natural: '/C.mp3',
-      sharp: '/Csharp.mp3',
-      doublesharp: '/D.mp3'
-  },
-    
-  D: {
-      doubleflat: '/C.mp3',
-      flat: '/Csharp.mp3',
-      natural: '/D.mp3',
-      sharp: '/Eflat.mp3',
-      doublesharp: '/E.mp3'
-  },
-  E: {
-      doubleflat: '/D.mp3',
-      flat: '/Eflat.mp3',
-      natural: '/E.mp3',
-      sharp: '/F.mp3',
-      doublesharp: '/Fsharp.mp3'
-  },
-  F: {
-      doubleflat: '/Eflat.mp3',
-      flat: '/E.mp3',
-      natural: '/F.mp3',
-      sharp: '/Fsharp.mp3',
-      doublesharp: '/G.mp3'
-  },
-  G: {
-      doubleflat: '/F.mp3',
-      flat: '/Fsharp.mp3',
-      natural: '/G.mp3',
-      sharp: '/Aflat.mp3',
-      doublesharp: '/A.mp3'
-  },
-  A: {
-      doubleflat: '/G.mp3',
-      flat: '/Aflat.mp3',
-      natural: '/A.mp3',
-      sharp: '/Bflat.mp3',
-      doublesharp: '/B.mp3'
-  },
-  B: {
-      doubleflat: '/A.mp3',
-      flat: '/Bflat.mp3',
-      natural: 'B.mp3',
-      sharp: '/C.mp3',
-      doublesharp: '/Csharp.mp3'
-  }
- }; */
 
 //Used for translating accidental text to appropriate character
 const accidentalToChar = {
@@ -197,7 +85,9 @@ var handlers = {
   },
   'GetPitchIntent': function() {
 
-    //Get pitch, multiplier and accidental and translate them to a standard format.
+    //Get pitch, multiplier, accidental, with and vibrato (with and vibrato
+    //    are just used to see if the user asked for the note
+    //    with vibrato) and translate them to a standard format.
     // pitch is var rather than const because some cleanup code later translates
     // common Alexa misunderstandings in pitch letters
     const pitchValue = this.event.request.intent.slots.pitch.value;
@@ -483,6 +373,7 @@ function supportsDisplay() {
 //This function handles the visual output. It checks whether the user device has a screen
 //    and renders a template if it does as well as rendering a card in the Alexa app.
 //    If not it only outputs to a card in the Alexa app.
+//No data is returned.
 //Parameters:  playStatus should be either 'play' or 'stop'          
 //Be sure to include keyword this as the first parameter to bind the scope.
 //example of use: makeTemplate.call(this, 'play');
@@ -491,7 +382,7 @@ function makeTemplate(playStatus){
   
   if (playStatus == 'play'){
     //Construct image file URLs - Check for special case of A440
-    //This is redundant and inefficient, since I'm constructing the URLs, putting them in
+    //This is redundant and inefficient since I'm constructing the URLs, putting them in
     //the objNotePackage object, then immediately reading them into another variable.
     //With this template function I can remove these properties from objNotePackage
     //but I like having them in one centralized place
@@ -544,7 +435,8 @@ function makeTemplate(playStatus){
   }
 //Always outputs to Alexa app  
 this.response.cardRenderer(cardShowTitle, cardShowContent, cardShowImage);
-return;
+
+return; //No data is returned
 }
 
 //This function chooses a practice tip at random and returns the tip as a string.
@@ -572,15 +464,104 @@ return randomTip;
 //  2)whether vibrato was requested
 //The URL is placed in objNotePackage.audioUrl
 //No data is passed back on return
+
 function CreateSoundFileURL(){
 
   //******************************
-  //START DEFINE SOUNDS FILE URLS FOR S3 AND SOUNDCLOUD
+  //START DEFINE SOUNDS FILE URLS FOR S3
   //******************************
 
 //Patterns to construct sound file URL
- //Use enharmonics to reduce number of files needed
- 
+//Use enharmonics to reduce number of files needed
+
+//Contains sound file URLs for files stored on Amazon S3
+ const pitchS3EndUrl = {
+  C: {
+      doubleflat: '/Bflat.mp3',
+      flat: '/B.mp3',
+      natural: '/C.mp3',
+      sharp: '/Csharp.mp3',
+      doublesharp: '/D.mp3'
+  },
+    
+  D: {
+      doubleflat: '/C.mp3',
+      flat: '/Csharp.mp3',
+      natural: '/D.mp3',
+      sharp: '/Eflat.mp3',
+      doublesharp: '/E.mp3'
+  },
+  E: {
+      doubleflat: '/D.mp3',
+      flat: '/Eflat.mp3',
+      natural: '/E.mp3',
+      sharp: '/F.mp3',
+      doublesharp: '/Fsharp.mp3'
+  },
+  F: {
+      doubleflat: '/Eflat.mp3',
+      flat: '/E.mp3',
+      natural: '/F.mp3',
+      sharp: '/Fsharp.mp3',
+      doublesharp: '/G.mp3'
+  },
+  G: {
+      doubleflat: '/F.mp3',
+      flat: '/Fsharp.mp3',
+      natural: '/G.mp3',
+      sharp: '/Aflat.mp3',
+      doublesharp: '/A.mp3'
+  },
+  A: {
+      doubleflat: '/G.mp3',
+      flat: '/Aflat.mp3',
+      natural: '/A.mp3',
+      sharp: '/Bflat.mp3',
+      doublesharp: '/B.mp3'
+  },
+  B: {
+      doubleflat: '/A.mp3',
+      flat: '/Bflat.mp3',
+      natural: 'B',
+      sharp: '/C.mp3',
+      doublesharp: '/Csharp.mp3'
+  }
+};
+  //******************************
+  //END DEFINE SOUNDS FILE URLS FOR S3 AND SOUNDCLOUD
+  //******************************
+
+
+  //Construct audio file URL.
+  //If vibrato requested add 'v' to end of URL
+  if (objNotePackage.Vibrato=='vibrato') {
+    //Check for A440 special case
+    if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
+      objNotePackage.audioUrl = S3_BASE_URL + 'audio/' + pitchS3EndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental] +'v.mp3';
+  }
+    else {
+      objNotePackage.audioUrl = S3_BASE_URL + 'audio/A440v.mp3';
+  }
+
+  }
+  else {
+    //Check for A440 special case
+    if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
+      objNotePackage.audioUrl = S3_BASE_URL + 'audio/' + pitchS3EndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental] +'.mp3';
+    }
+    else {
+      objNotePackage.audioUrl = S3_BASE_URL + 'audio/A440.mp3';
+    }
+  }
+  
+
+  return; //No data is returned
+}
+
+
+/*
+This is the old code for soundcloud file definitions
+
  //Contains URLs for NO VIBRATO sound files stored on SoundCloud
  const pitchSoundcloudNoVibratoEndUrl = {
   C: {
@@ -689,89 +670,30 @@ const pitchSoundcloudVibratoEndUrl = {
   }
 };
 
-//Contains sound file URLs for files stored on Amazon S3
- const pitchS3EndUrl = {
-  C: {
-      doubleflat: '/Bflat.mp3',
-      flat: '/B.mp3',
-      natural: '/C.mp3',
-      sharp: '/Csharp.mp3',
-      doublesharp: '/D.mp3'
-  },
-    
-  D: {
-      doubleflat: '/C.mp3',
-      flat: '/Csharp.mp3',
-      natural: '/D.mp3',
-      sharp: '/Eflat.mp3',
-      doublesharp: '/E.mp3'
-  },
-  E: {
-      doubleflat: '/D.mp3',
-      flat: '/Eflat.mp3',
-      natural: '/E.mp3',
-      sharp: '/F.mp3',
-      doublesharp: '/Fsharp.mp3'
-  },
-  F: {
-      doubleflat: '/Eflat.mp3',
-      flat: '/E.mp3',
-      natural: '/F.mp3',
-      sharp: '/Fsharp.mp3',
-      doublesharp: '/G.mp3'
-  },
-  G: {
-      doubleflat: '/F.mp3',
-      flat: '/Fsharp.mp3',
-      natural: '/G.mp3',
-      sharp: '/Aflat.mp3',
-      doublesharp: '/A.mp3'
-  },
-  A: {
-      doubleflat: '/G.mp3',
-      flat: '/Aflat.mp3',
-      natural: '/A.mp3',
-      sharp: '/Bflat.mp3',
-      doublesharp: '/B.mp3'
-  },
-  B: {
-      doubleflat: '/A.mp3',
-      flat: '/Bflat.mp3',
-      natural: 'B.mp3',
-      sharp: '/C.mp3',
-      doublesharp: '/Csharp.mp3'
-  }
-};
-  //******************************
-  //END DEFINE SOUNDS FILE URLS FOR S3 AND SOUNDCLOUD
-  //******************************
 
-
-  //Construct audio file URL.
-  //If vibrato requested get URL from VIBRATO list
-  //else take URL from NO VIBRATO list
+//Construct audio file URL.
+  //If vibrato requested add 'v' to end of URL
   if (objNotePackage.Vibrato=='vibrato') {
     //Check for A440 special case
     if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
-
-      objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudVibratoEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
+      objNotePackage.audioUrl = S3_BASE_URL + pitchS3EndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental] +'v.mp3';
+      //objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudVibratoEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
   }
     else {
       objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440v.mp3';
+      //objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440v.mp3';
   }
 
   }
   else {
     //Check for A440 special case
     if (['4', '40'].indexOf(objNotePackage.accidental) === -1){
-
-      objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudNoVibratoEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
+      objNotePackage.audioUrl = S3_BASE_URL + pitchS3EndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental] +'.mp3';
+      //objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + pitchSoundcloudNoVibratoEndUrl[objNotePackage.pitch][objNotePackage.multiplier + objNotePackage.accidental];
     }
     else {
-      objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440.mp3';
+      
+      //objNotePackage.audioUrl = SOUNDCLOUD_BASE_URL + '/A440.mp3';
     }
   }
-  
-
-  return; //No data is returned
-}
+*/
